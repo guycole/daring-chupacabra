@@ -8,11 +8,16 @@ import (
 )
 
 func TestNewMessage(t *testing.T) {
+	turn := 1
 	payload := "testaroo"
 
-	msg, err := newMessage(payload)
+	msg, err := newMessage(turn, payload)
 	if err != nil {
 		t.Error("new message failure")
+	}
+
+	if msg.turn != turn {
+		t.Error("turn failure")
 	}
 
 	if msg.payload != payload {
@@ -20,8 +25,19 @@ func TestNewMessage(t *testing.T) {
 	}
 }
 
+func TestNewMessageBadTurn(t *testing.T) {
+	msg, err := newMessage(0, "bogus")
+	if err == nil {
+		t.Error("new message should fail")
+	}
+
+	if msg != nil {
+		t.Error("message should be nil")
+	}
+}
+
 func TestNewMessageBadPayload(t *testing.T) {
-	msg, err := newMessage("")
+	msg, err := newMessage(1, "")
 	if err == nil {
 		t.Error("new message should fail")
 	}

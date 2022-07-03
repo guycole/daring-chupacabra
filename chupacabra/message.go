@@ -10,15 +10,21 @@ import (
 )
 
 type messageType struct {
+	turn    int
 	payload string
+	next    *messageType //single linked list sorted by turn (oldest last)
 }
 
-func newMessage(payload string) (*messageType, error) {
+func newMessage(turn int, payload string) (*messageType, error) {
+	if turn < 1 {
+		return nil, errors.New("bad turn")
+	}
+
 	if len(payload) < 1 {
 		return nil, errors.New("bad payload")
 	}
 
-	result := messageType{payload: payload}
+	result := messageType{turn: turn, payload: payload}
 
 	//	start := time.Now()
 

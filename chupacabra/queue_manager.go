@@ -9,7 +9,9 @@ import (
 )
 
 type queueType struct {
-	name string
+	name           string
+	messageCounter int
+	next           *messageType //single linked list sorted by turn
 }
 
 const maxQueue = 16
@@ -25,8 +27,8 @@ func newQueue(name string) (*queueType, error) {
 	return &result, nil
 }
 
-func userAdd(name string, queueArray queueArrayType) (int, error) {
-	// duplicate name test
+func queueAdd(name string, queueArray queueArrayType) (int, error) {
+	// duplicate queue name test
 	for ndx := 0; ndx < maxQueue; ndx++ {
 		if (queueArray[ndx] != nil) && (queueArray[ndx].name == name) {
 			return -1, errors.New("duplicate name")
@@ -51,7 +53,7 @@ func userAdd(name string, queueArray queueArrayType) (int, error) {
 	return -1, errors.New("queueArray full")
 }
 
-func userDelete(name string, queueArray queueArrayType) int {
+func queueDelete(name string, queueArray queueArrayType) int {
 	for ndx := 0; ndx < maxQueue; ndx++ {
 		if queueArray[ndx] == nil {
 			queueArray[ndx] = nil
@@ -60,4 +62,55 @@ func userDelete(name string, queueArray queueArrayType) int {
 	}
 
 	return -1
+}
+
+func queueDump(queue *queueType) {
+	log.Println("=-=-=-= Queue Dump =-=-=-=")
+	log.Println(queue.name, queue.messageCounter)
+
+	current := queue.next
+	for {
+		if current == nil {
+			break
+		}
+
+		log.Println(current.turn, ":", current.payload)
+		current = current.next
+	}
+
+	log.Println("=-=-=-= Queue Dump =-=-=-=")
+}
+
+func messageAdd(message *messageType, queue *queueType) {
+	queue.messageCounter++
+
+	if queue.next == nil {
+		// new message root for empty list
+		queue.next = message
+	} else if message.turn < queue.next.turn {
+		// new message root for earlier turn
+		message.next = queue.next
+		queue.next = message
+	} else {
+		// insert message into sorted list
+		current := queue.next
+		var last *messageType
+
+		for (current != nil) && (current.turn < message.turn) {
+			last = current
+			current = current.next
+		}
+
+		if current == nil {
+			// new tail
+			last.next = message
+		} else if last == nil {
+			// new root
+			current.next = message
+		} else {
+			// new middle
+			last.next = message
+			message.next = current
+		}
+	}
 }
