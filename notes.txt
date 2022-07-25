@@ -4,4 +4,10 @@ https://yalantis.com/blog/how-to-build-websockets-in-go/
 https://datatracker.ietf.org/doc/html/rfc6455
 https://astaxie.gitbooks.io/build-web-application-with-golang/content/en/02.7.html
 
+https://www.digitalocean.com/community/tutorials/how-to-install-go-on-ubuntu-20-04
+
 go mod init chupacabra
+
+go run .
+go build
+go install
