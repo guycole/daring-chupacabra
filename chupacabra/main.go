@@ -20,7 +20,7 @@ func say(s string) {
 	}
 }
 
-func eclectic() {
+func eclectic2() {
 	done := make(chan bool)
 	ticker := time.NewTicker(1 * time.Second)
 
@@ -45,7 +45,9 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	webPortal()
+	eclectic()
+
+	//webPortal()
 
 	//	done := make(chan bool)
 	//	ticker := time.NewTicker(1 * time.Second)

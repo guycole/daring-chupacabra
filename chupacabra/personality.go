@@ -3,11 +3,7 @@
 
 package main
 
-import (
-	"errors"
-	"log"
-)
-
+/*
 type userType struct {
 	name string
 }
@@ -60,3 +56,4 @@ func userDelete(name string) int {
 
 	return -1
 }
+*/
