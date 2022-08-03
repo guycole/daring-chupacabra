@@ -11,7 +11,7 @@ import (
 type queueType struct {
 	name           string
 	messageCounter int
-	next           *messageType //single linked list sorted by turn
+	messageList    *messageType //single linked list sorted by turn
 }
 
 const maxQueue = 16
@@ -68,7 +68,7 @@ func queueDump(queue *queueType) {
 	log.Println("=-=-=-= Queue Dump =-=-=-=")
 	log.Println(queue.name, queue.messageCounter)
 
-	current := queue.next
+	current := queue.messageList
 	for {
 		if current == nil {
 			break
@@ -84,16 +84,16 @@ func queueDump(queue *queueType) {
 func messageAdd(message *messageType, queue *queueType) {
 	queue.messageCounter++
 
-	if queue.next == nil {
+	if queue.messageList == nil {
 		// new message root for empty list
-		queue.next = message
-	} else if message.turn < queue.next.turn {
+		queue.messageList = message
+	} else if message.turn < queue.messageList.turn {
 		// new message root for earlier turn
-		message.next = queue.next
-		queue.next = message
+		message.next = queue.messageList
+		queue.messageList = message
 	} else {
 		// insert message into sorted list
-		current := queue.next
+		current := queue.messageList
 		var last *messageType
 
 		for (current != nil) && (current.turn < message.turn) {
@@ -113,4 +113,18 @@ func messageAdd(message *messageType, queue *queueType) {
 			message.next = current
 		}
 	}
+}
+
+func messageRead(queue *queueType) *messageType {
+	if queue.messageCounter < 1 {
+		// empty message list
+		return nil
+	}
+
+	temp := queue.messageList
+	queue.messageList = queue.messageList.next
+
+	queue.messageCounter--
+
+	return temp
 }

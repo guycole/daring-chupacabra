@@ -57,6 +57,7 @@ func TestQueueMessageAdd(t *testing.T) {
 		t.Error("new message4 failure")
 	}
 
+	// add messages
 	messageAdd(msg1, queue)
 	messageAdd(msg2, queue)
 	messageAdd(msg3, queue)
@@ -64,23 +65,51 @@ func TestQueueMessageAdd(t *testing.T) {
 
 	queueDump(queue)
 
+	// ensure proper message list
 	if queue.messageCounter != 4 {
 		t.Error("bad message counter")
 	}
 
-	if queue.next.turn != 1 {
+	if queue.messageList.turn != 1 {
 		t.Error("bad list root")
 	}
 
-	if queue.next.next.turn != 1 {
+	if queue.messageList.next.turn != 1 {
 		t.Error("bad list 2")
 	}
 
-	if queue.next.next.next.turn != 3 {
+	if queue.messageList.next.next.turn != 3 {
 		t.Error("bad list 3")
 	}
 
-	if queue.next.next.next.next.turn != 5 {
+	if queue.messageList.next.next.next.turn != 5 {
 		t.Error("bad list 4")
+	}
+
+	// consume message list
+	temp := messageRead(queue)
+	temp = messageRead(queue)
+	temp = messageRead(queue)
+	temp = messageRead(queue)
+
+	if queue.messageCounter != 0 {
+		t.Error("bad message counter")
+	}
+
+	if temp.payload != "payload3" {
+		t.Error("bad payload3")
+	}
+
+	queueDump(queue)
+
+	// attempt to read empty list
+	temp = messageRead(queue)
+
+	if queue.messageCounter != 0 {
+		t.Error("bad message counter")
+	}
+
+	if temp != nil {
+		t.Error("bad nil payload")
 	}
 }
