@@ -31,7 +31,7 @@ func TestNewQueueBadName(t *testing.T) {
 	}
 }
 
-func TestQueueMessageAdd(t *testing.T) {
+func TestQueueMessageAddDelete(t *testing.T) {
 	queue, err := newQueue("queue1")
 	if err != nil {
 		t.Error("new queue failure")
