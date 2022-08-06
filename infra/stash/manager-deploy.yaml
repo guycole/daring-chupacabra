@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cyclops-manager
+  labels:
+    app: cyclops-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cyclops-manager
+  template:
+    metadata:
+      labels:
+        app: cyclops-manager
+    spec:
+      containers:
+      - name: manager-app-container
+        image: daring-cyclops-manager:1
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 4190
+          - containerPort: 6379
+          - containerPort: 8088
+        env:
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-secret
+                key: redis-password
+
+#          - name: REDIS_URL 
+#            valueFrom:
+#              configMapKeyRef:
+#                name: app-configmap 
+#               key: redis-service 

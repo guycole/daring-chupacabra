@@ -1,0 +1,53 @@
+#
+# kubectl create deployment web-deploy --image=nginx:1.23.1 --replicas=2 --namespace=chupacabra --port=80 --dry-run=client -o yaml
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: web-deploy
+  name: web-deploy
+  namespace: chupacabra
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-deploy
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: web-deploy
+    spec:
+      containers:
+      - image: nginx:1.23.1
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
+--- 
+#
+# kubectl create service nodeport web-deploy -n chupacabra --tcp=80 --dry-run=client -o yaml 
+#
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: web-deploy
+  name: web-deploy
+  namespace: chupacabra
+spec:
+  ports:
+  - name: "port80"
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: web-deploy
+  type: NodePort
+status:
+  loadBalancer: {}

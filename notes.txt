@@ -16,4 +16,6 @@ https://github.com/gorilla/websocket
 https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
 
 minikube addons enable ingress
+minikube addons enable ingress-dns
 minikube addons list
+minikube service web-deploy -n chupacabra --url
