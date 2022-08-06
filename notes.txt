@@ -11,3 +11,9 @@ go mod init chupacabra
 go run .
 go build
 go install
+
+https://github.com/gorilla/websocket
+https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
+
+minikube addons enable ingress
+minikube addons list
