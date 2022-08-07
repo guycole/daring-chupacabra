@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Title:start_minikube.sh
+# Title:start-minikube.sh
 # Description: start minikube
 # Development Environment: OS X 10.13.6
 # Author: G.S. Cole (guycole at gmail dot com)

@@ -1,4 +1,4 @@
-# helm install cyclops-redis bitnami/redis --values values-minikube.yml -n cyclops-redis
+# helm install redis bitnami/redis --values redis-minikube.yaml -n chupacabra
 
 ## @section Global parameters
 ## Global Docker image parameters
