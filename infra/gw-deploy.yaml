@@ -1,53 +1,55 @@
 #
-# kubectl create deployment web-deploy --image=nginx:1.23.1 --replicas=2 --namespace=chupacabra --port=80 --dry-run=client -o yaml
+# gateway k8s deployment and service
+# kubectl create deployment gw-deploy --image=nginx:1.23.1 --replicas=2 --namespace=chupacabra --port=80 --dry-run=client -o yaml
 #
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: web-deploy
-  name: web-deploy
+    app: gw-deploy
+  name: gw-deploy
   namespace: chupacabra
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: web-deploy
+      app: gw-deploy
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: web-deploy
+        app: gw-deploy
     spec:
       containers:
       - image: nginx:1.23.1
-        name: nginx
+        name: gw-http
         ports:
-        - containerPort: 8088
+        - name: gw-http
+          containerPort: 80
         resources: {}
 status: {}
 --- 
 #
-# kubectl create service nodeport web-deploy -n chupacabra --tcp=80 --dry-run=client -o yaml 
+# kubectl create service nodeport gw-deploy -n chupacabra --tcp=80 --dry-run=client -o yaml 
 #
 apiVersion: v1
 kind: Service
 metadata:
   creationTimestamp: null
   labels:
-    app: web-deploy
-  name: web-deploy
+    app: gw-deploy
+  name: gw-deploy
   namespace: chupacabra
 spec:
   ports:
-  - name: "port80"
+  - name: "gw-port"
     port: 8088
     protocol: TCP
-    targetPort: 8088
+    targetPort: gw-http
   selector:
-    app: web-deploy
+    app: gw-deploy
   type: NodePort
 status:
   loadBalancer: {}

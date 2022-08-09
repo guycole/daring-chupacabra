@@ -6,6 +6,8 @@ https://astaxie.gitbooks.io/build-web-application-with-golang/content/en/02.7.ht
 
 https://www.digitalocean.com/community/tutorials/how-to-install-go-on-ubuntu-20-04
 
+https://www.devopsoscar.dev/2017-04-12-deploy-a-static-site-using-an-nginx-docker-container-to-a-local-kubernetes-minikube-instance/
+
 go mod init chupacabra
 
 go run .
@@ -14,6 +16,13 @@ go install
 
 https://github.com/gorilla/websocket
 https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
+
+
+gsc@lingling:445>minikube version
+minikube version: v1.26.1
+commit: 62e108c3dfdec8029a890ad6d8ef96b6461426dc
+gsc@lingling:446>docker -v
+Docker version 20.10.5, build 55c4c88
 
 minikube addons enable ingress
 minikube addons enable ingress-dns

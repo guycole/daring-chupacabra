@@ -2,7 +2,6 @@
 # Title:makefile
 #
 # Description:
-#
 #   'make clean' removes all core and object files
 #   'make ultraclean' removes all executables
 #
@@ -14,24 +13,20 @@
 #   G.S. Cole (guycole at gmail dot com)
 #
 DOCKER = docker
-DARING_CYCLOPS_MANAGER = daring-cyclops-manager:1
-DARING_CYCLOPS_WORKER = daring-cyclops-worker:1
+DARING_CHUPACABRA_FRONT_END = daring-chupacabra-fe:1
+DARING_CHUPACABRA_BACK_END = daring-chupacabra-be:1
 HELM = helm
 KUBECTL = kubectl
 MINIKUBE = minikube
 
-manager_build:
-	cd manager; $(DOCKER) build . -t $(DARING_CYCLOPS_MANAGER)
+be_build:
+	cd chupacabra; $(DOCKER) build . -f backend.Dockerfile -t $(DARING_CHUPACABRA_BACK_END)
 
-manager_delete:
-	$(KUBECTL) delete -f infra/manager-ingress.yaml -n cyclops-app
-	$(KUBECTL) delete -f infra/manager-service.yaml -n cyclops-app
-	$(KUBECTL) delete -f infra/manager-deploy.yaml -n cyclops-app
+be_delete:
+	$(KUBECTL) delete -f infra/be-deploy.yaml
 
-manager_deploy:
-	$(KUBECTL) apply -f infra/manager-deploy.yaml -n cyclops-app
-	$(KUBECTL) apply -f infra/manager-service.yaml -n cyclops-app	
-	$(KUBECTL) apply -f infra/manager-ingress.yaml -n cyclops-app
+be_deploy:
+	$(KUBECTL) apply -f infra/be-deploy.yaml
 
 minikube_reset:
 	$(MINIKUBE) stop
@@ -41,8 +36,7 @@ minikube_start:
 	cd infra; ./start_minikube.sh
 
 minikube_setup:
-	$(KUBECTL) create namespace cyclops-app	
-	$(KUBECTL) create namespace monitoring
+	$(KUBECTL) apply -f infra/namespace.yaml
 	$(MINIKUBE) addons enable ingress
 	$(HELM) repo add stable https://charts.helm.sh/stable
 	$(HELM) repo update
@@ -62,9 +56,9 @@ monitoring_expose:
 	$(KUBECTL) expose service prometheus-grafana --type=NodePort --target-port=3000 --name=grafana-np --namespace=monitoring
 
 redis_deploy:
-	$(KUBECTL) apply -f infra/redis-secret.yaml -n cyclops-app 
+	$(KUBECTL) apply -f infra/redis-secret.yaml -n chupacabra
 	$(HELM) repo add bitnami https://charts.bitnami.com/bitnami
-	$(HELM) upgrade --debug --install cyclops-redis bitnami/redis -n cyclops-app --version 15.5.4 --values infra/redis-values.yaml
+	$(HELM) upgrade --debug --install redis bitnami/redis -n chupacabra --version 15.7.6 --values infra/redis-minikube.yaml
 
 worker_build:
 	cd worker; $(DOCKER) build . -t $(DARING_CYCLOPS_WORKER)

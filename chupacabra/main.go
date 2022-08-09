@@ -6,7 +6,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"time"
 )
 
@@ -43,9 +42,9 @@ func main() {
 	log.Println(banner)
 	log.Println(configuration)
 
-	rand.Seed(time.Now().UnixNano())
+	//rand.Seed(time.Now().UnixNano())
 
-	eclectic()
+	//eclectic()
 
 	//webPortal()
 

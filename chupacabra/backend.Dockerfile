@@ -1,25 +1,25 @@
 #
-# daring-chupacabra
+# daring-chupacabra-backend
 #
-# docker build . -t daring-chupacabra:1
+# docker build . -t daring-chupacabra-be:1
 #
-# docker run --rm -it daring-cyclops-manager:1 /bin/sh
-# docker run --rm daring-cyclops-manager:1
+# docker run --rm -it daring-chupacabra-be:1 /bin/sh
+# docker run --rm daring-chupacabra-be:1
 #
 FROM golang:1.16-alpine
-LABEL build_date="2022-09-04"
+LABEL build_date="2022-10-12"
 LABEL description="daring-chupacabra"
 LABEL maintainer="guycole@gmail.com"
 #
 WORKDIR /app
 #
 COPY go.mod .
-#COPY go.sum .
+COPY go.sum .
 RUN go mod download
 #
 COPY *.go ./
 #
-RUN go build -o /app/chupacabra
+RUN go build -o /app/manager
 
 # This is for documentation purposes only.
 # To actually open the port, runtime parameters
@@ -33,4 +33,4 @@ RUN go build -o /app/chupacabra
 #ENV HTTP_PORT=8081
 
 # Run
-CMD [ "/app/chupacabra" ]
+CMD [ "/app/manager" ]
