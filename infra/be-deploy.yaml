@@ -1,0 +1,33 @@
+#
+# back end k8s deployment
+# kubectl create deployment bw-deploy --image=daring-chupacabra:1 --replicas=1 --namespace=chupacabra --dry-run=client -o yaml
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: be-deploy
+  name: be-deploy
+  namespace: chupacabra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bw-deploy
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: bw-deploy
+    spec:
+      containers:
+      - image: daring-chupacabra:1
+        imagePullPolicy: Never
+        name: chupacabra
+        env:
+          - name: RUN_MODE
+            value: backend
+        resources: {}
+status: {}

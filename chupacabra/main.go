@@ -6,6 +6,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
+	"os"
 	"time"
 )
 
@@ -42,7 +44,16 @@ func main() {
 	log.Println(banner)
 	log.Println(configuration)
 
-	//rand.Seed(time.Now().UnixNano())
+	log.Println("Mode:", os.Getenv("RUN_MODE"))
+
+	for true {
+		log.Println("Infinite Loop 2")
+		time.Sleep(time.Second)
+	}
+
+	rand.Seed(time.Now().UnixNano())
+
+	//run_mode := os.Getenv("RUN_MODE")
 
 	//eclectic()
 

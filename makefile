@@ -13,14 +13,13 @@
 #   G.S. Cole (guycole at gmail dot com)
 #
 DOCKER = docker
-DARING_CHUPACABRA_FRONT_END = daring-chupacabra-fe:1
-DARING_CHUPACABRA_BACK_END = daring-chupacabra-be:1
+DARING_CHUPACABRA = daring-chupacabra:1
 HELM = helm
 KUBECTL = kubectl
 MINIKUBE = minikube
 
 be_build:
-	cd chupacabra; $(DOCKER) build . -f backend.Dockerfile -t $(DARING_CHUPACABRA_BACK_END)
+	cd chupacabra; $(DOCKER) build . -t $(DARING_CHUPACABRA)
 
 be_delete:
 	$(KUBECTL) delete -f infra/be-deploy.yaml
@@ -28,12 +27,22 @@ be_delete:
 be_deploy:
 	$(KUBECTL) apply -f infra/be-deploy.yaml
 
+fe_build:
+	cd chupacabra; $(DOCKER) build . -t $(DARING_CHUPACABRA)
+
+fe_delete:
+	$(KUBECTL) delete -f infra/fe-deploy.yaml -n chupacabra
+
+fe_deploy:
+	$(KUBECTL) apply -f infra/fe-deploy.yaml -n chupacabra
+
 minikube_reset:
 	$(MINIKUBE) stop
 	$(MINIKUBE) delete
 
 minikube_start:
-	cd infra; ./start_minikube.sh
+	cd infra; ./start-minikube.sh
+	eval $(minikube docker-env)
 
 minikube_setup:
 	$(KUBECTL) apply -f infra/namespace.yaml
@@ -59,12 +68,3 @@ redis_deploy:
 	$(KUBECTL) apply -f infra/redis-secret.yaml -n chupacabra
 	$(HELM) repo add bitnami https://charts.bitnami.com/bitnami
 	$(HELM) upgrade --debug --install redis bitnami/redis -n chupacabra --version 15.7.6 --values infra/redis-minikube.yaml
-
-worker_build:
-	cd worker; $(DOCKER) build . -t $(DARING_CYCLOPS_WORKER)
-
-worker_delete:
-	$(KUBECTL) delete -f infra/worker-deploy.yaml -n cyclops-app
-
-worker_deploy:
-	$(KUBECTL) apply -f infra/worker-deploy.yaml -n cyclops-app

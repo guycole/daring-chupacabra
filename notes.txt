@@ -17,6 +17,7 @@ go install
 https://github.com/gorilla/websocket
 https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
 
+https://stackoverflow.com/questions/42564058/how-to-use-local-docker-images-with-minikube
 
 gsc@lingling:445>minikube version
 minikube version: v1.26.1
