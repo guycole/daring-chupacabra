@@ -8,18 +8,14 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
+
+	"github.com/go-redis/redis"
 )
 
 // banner splash message
 const banner = "daring chupacabra 0.0"
-
-func say(s string) {
-	for i := 0; i < 5; i++ {
-		time.Sleep(100 * time.Millisecond)
-		fmt.Println(s)
-	}
-}
 
 func eclectic2() {
 	done := make(chan bool)
@@ -44,16 +40,33 @@ func main() {
 	log.Println(banner)
 	log.Println(configuration)
 
-	log.Println("Mode:", os.Getenv("RUN_MODE"))
+	run_mode := os.Getenv("RUN_MODE")
+	log.Println("RunMode:", run_mode)
+
+	rand.Seed(time.Now().UnixNano())
+
+	// TODO get these arguments from secrets
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "redis-master:6379",
+		Password: "bigSekret",
+		DB:       0, // use default DB
+	})
+
+	log.Println(rdb)
+
+	if strings.Compare(run_mode, "backend") == 0 {
+		log.Println("backend mode")
+	}
+
+	fmt.Println(strings.Compare("GeeksforGeeks",
+		"GeeksforGeeks"))
 
 	for true {
 		log.Println("Infinite Loop 2")
 		time.Sleep(time.Second)
 	}
 
-	rand.Seed(time.Now().UnixNano())
-
-	//run_mode := os.Getenv("RUN_MODE")
+	//    topic := rdb.Subscribe(context.Background(), channelName)
 
 	//eclectic()
 
