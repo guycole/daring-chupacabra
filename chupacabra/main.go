@@ -4,100 +4,30 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"os"
-	"strings"
 	"time"
-
-	"github.com/go-redis/redis"
 )
 
 // banner splash message
 const banner = "daring chupacabra 0.0"
 
-func eclectic2() {
-	done := make(chan bool)
-	ticker := time.NewTicker(1 * time.Second)
-
-	for {
-		select {
-		case <-done:
-			ticker.Stop()
-			return
-		case <-ticker.C:
-			fmt.Println("Hello !!")
-		}
-	}
-
-	// wait for 10 seconds
-	time.Sleep(10 * time.Second)
-	done <- true
-}
-
 func main() {
 	log.Println(banner)
 	log.Println(configuration)
 
+	rand.Seed(time.Now().UnixNano())
+
 	run_mode := os.Getenv("RUN_MODE")
 	log.Println("RunMode:", run_mode)
 
-	rand.Seed(time.Now().UnixNano())
-
-	// TODO get these arguments from secrets
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "redis-master:6379",
-		Password: "bigSekret",
-		DB:       0, // use default DB
-	})
-
-	log.Println(rdb)
-
-	if strings.Compare(run_mode, "backend") == 0 {
-		log.Println("backend mode")
+	switch run_mode {
+	case "backend":
+		backEnd()
+	case "frontend":
+		frontEnd()
+	default:
+		log.Printf("unknown run mode %s\n", run_mode)
 	}
-
-	fmt.Println(strings.Compare("GeeksforGeeks",
-		"GeeksforGeeks"))
-
-	for true {
-		log.Println("Infinite Loop 2")
-		time.Sleep(time.Second)
-	}
-
-	//    topic := rdb.Subscribe(context.Background(), channelName)
-
-	//eclectic()
-
-	//webPortal()
-
-	//	done := make(chan bool)
-	//	ticker := time.NewTicker(1 * time.Second)
-
-	//	go func() {
-	//		for {
-	//			select {
-	//			case <-done:
-	//				ticker.Stop()
-	//				return
-	//			case <-ticker.C:
-	//				fmt.Println("Hello !!")
-	//			}
-	//		}
-	//	}()
-
-	// wait for 10 seconds
-	//	time.Sleep(10 * time.Second)
-	//	done <- true
-
-	//go eclectic()
-	//	log.Println("back")
-
-	//go say("world")
-	//say("hello")
-
-	//	fmt.Println("Hello, Modules!")
-	//http.Handle("/metrics", promhttp.Handler())
-	//http.ListenAndServe(":4190", nil)
 }

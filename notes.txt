@@ -75,3 +75,10 @@ To connect to your database from outside the cluster execute the following comma
     kubectl port-forward --namespace chupacabra svc/redis-master 6379:6379 &
     REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli -h 127.0.0.1 -p 6379
 gsc@lingling:395>
+
+exec into redis-master-0 for redis-cli utility
+redis-cli -a bigSekret
+info server
+
+Redist pub/sub channels
+There is always admin_in

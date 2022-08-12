@@ -5,8 +5,6 @@ package main
 
 import (
 	"log"
-
-	redis "github.com/go-redis/redis/v8"
 )
 
 // Configuration comment
@@ -15,8 +13,6 @@ type Configuration struct {
 	ReadTimeout  int64
 	WriteTimeout int64
 	Static       string
-
-	rdb *redis.Client
 }
 
 var configuration Configuration
