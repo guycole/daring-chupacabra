@@ -82,3 +82,5 @@ info server
 
 Redist pub/sub channels
 There is always admin_in
+
+"{\"ArgumentSize\":1,\"Arguments\":[\"0\",\"1\",\"2\"],\"PayloadId\":\"id\",\"PayloadType\":\"test\",\"ReplyChannel\":\"front_end\"}"

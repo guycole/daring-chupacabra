@@ -6,13 +6,12 @@ package main
 import (
 	"context"
 	"encoding/json"
-
 	"log"
 
 	redis "github.com/go-redis/redis/v8"
 )
 
-const maxPayloadArguments = 5
+const maxPayloadArguments = 3
 
 type argumentArrayType [maxPayloadArguments]string
 
