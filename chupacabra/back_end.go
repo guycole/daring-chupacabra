@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"os"
 
 	redis "github.com/go-redis/redis/v8"
 )
@@ -26,14 +27,20 @@ type PayloadType struct {
 func backEnd() {
 	log.Println("backEnd entry")
 
-	// TODO get these arguments from secrets
+	redisAddress := os.Getenv("REDIS_ADDRESS")
+	log.Println(redisAddress)
+
+	redisPassword := os.Getenv("REDIS_PASSWORD")
+	log.Println(redisPassword)
+
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "redis-master.chupacabra.svc.cluster.local:6379",
-		Password: "bigSekret",
+		Addr:     redisAddress,
+		Password: redisPassword,
 		DB:       0, // use default DB
 	})
 
-	channelName := "back_end"
+	channelName := os.Getenv("BE_CHANNEL")
+	log.Println(channelName)
 
 	topic := rdb.Subscribe(context.Background(), channelName)
 
