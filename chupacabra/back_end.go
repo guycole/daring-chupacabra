@@ -17,6 +17,8 @@ func handler(pt *PayloadType, replyChannel string, rdb *redis.Client) {
 		log.Println("new payload failure")
 	}
 
+	log.Println(response)
+
 	publishPayload(response, replyChannel, rdb)
 }
 
@@ -50,8 +52,13 @@ func backEnd() {
 		}
 
 		log.Println("fresh message noted")
+		log.Println(message)
+
+		//time.Sleep(time.Second * 10)
 
 		pt := decodePayload(message)
-		handler(pt, channelName, rdb)
+		log.Println(pt)
+
+		handler(pt, pt.ReplyChannel, rdb)
 	}
 }

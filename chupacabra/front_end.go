@@ -4,8 +4,6 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"log"
 	"os"
 	"time"
@@ -36,17 +34,9 @@ func frontEnd() {
 		log.Panic(err)
 	}
 
-	payload, err := json.Marshal(pt)
-	if err != nil {
-		log.Println(err)
-	}
+	publishPayload(pt, backEndChannelName, rdb)
 
-	err = rdb.Publish(context.Background(), backEndChannelName, payload).Err()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for true {
+	for {
 		log.Println("Infinite Loop 2")
 		time.Sleep(time.Second * 10)
 	}

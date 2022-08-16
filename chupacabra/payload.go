@@ -43,7 +43,7 @@ func decodePayload(message *redis.Message) *PayloadType {
 func publishPayload(pt *PayloadType, channelName string, rdb *redis.Client) {
 	payload, err := json.Marshal(pt)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 
 	err = rdb.Publish(context.Background(), channelName, payload).Err()
