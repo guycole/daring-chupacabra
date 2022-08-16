@@ -5,23 +5,19 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"os"
 
 	redis "github.com/go-redis/redis/v8"
 )
 
-const maxPayloadArguments = 3
+func handler(pt *PayloadType, replyChannel string, rdb *redis.Client) {
+	response, err := newPayload(pt.PayloadId, "OK", replyChannel)
+	if err != nil {
+		log.Println("new payload failure")
+	}
 
-type argumentArrayType [maxPayloadArguments]string
-
-type PayloadType struct {
-	ArgumentSize int
-	Arguments    argumentArrayType
-	PayloadId    string
-	PayloadType  string
-	ReplyChannel string
+	publishPayload(response, replyChannel, rdb)
 }
 
 func backEnd() {
@@ -53,16 +49,9 @@ func backEnd() {
 			continue
 		}
 
-		log.Println(message)
+		log.Println("fresh message noted")
 
-		var pt PayloadType
-		err = json.Unmarshal([]byte(message.Payload), &pt)
-		if err != nil {
-			log.Println(err)
-			log.Println("backEnd skipping bad unmarshal")
-			continue
-		}
-
-		log.Println(pt)
+		pt := decodePayload(message)
+		handler(pt, channelName, rdb)
 	}
 }

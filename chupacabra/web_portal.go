@@ -6,7 +6,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -28,16 +27,18 @@ func webPortal() {
 	router.HandleFunc("/", indexHandler)
 	router.HandleFunc("/about", aboutHandler)
 
-	// starting up the server
-	server := &http.Server{
-		// Addr:           configuration.Address,
-		Addr:           "0.0.0.0:8088",
-		Handler:        router,
-		ReadTimeout:    time.Duration(configuration.ReadTimeout * int64(time.Second)),
-		WriteTimeout:   time.Duration(configuration.WriteTimeout * int64(time.Second)),
-		MaxHeaderBytes: 1 << 20,
-	}
-	log.Fatal(server.ListenAndServe())
+	/*
+		// starting up the server
+		server := &http.Server{
+			// Addr:           configuration.Address,
+			Addr:           "0.0.0.0:8088",
+			Handler:        router,
+			ReadTimeout:    time.Duration(configuration.ReadTimeout * int64(time.Second)),
+			WriteTimeout:   time.Duration(configuration.WriteTimeout * int64(time.Second)),
+			MaxHeaderBytes: 1 << 20,
+		}
+		log.Fatal(server.ListenAndServe())
+	*/
 
 	log.Println("webPortal exit")
 }

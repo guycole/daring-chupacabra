@@ -26,8 +26,24 @@ spec:
       - image: daring-chupacabra:1
         name: fe-http
         env:
+          - name: BE_CHANNEL
+            value: be_channel
+          - name: FE_CHANNEL
+            value: fe_channel
           - name: RUN_MODE
             value: frontend
+          - name: REDIS_ADDRESS
+            valueFrom:
+              secretKeyRef:
+                name: redis-secret
+                key: REDIS_ADDRESS
+                optional: false
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-secret
+                key: REDIS_PASSWORD
+                optional: false
         ports:
         - name: fe-http
           containerPort: 80

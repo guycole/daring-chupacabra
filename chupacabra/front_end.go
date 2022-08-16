@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"os"
 	"time"
 
 	redis "github.com/go-redis/redis/v8"
@@ -15,27 +16,32 @@ import (
 func frontEnd() {
 	log.Println("frontEnd entry")
 
-	// TODO get these arguments from secrets
+	redisAddress := os.Getenv("REDIS_ADDRESS")
+	log.Println(redisAddress)
+
+	redisPassword := os.Getenv("REDIS_PASSWORD")
+	log.Println(redisPassword)
+
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "redis-master.chupacabra.svc.cluster.local:6379",
-		Password: "bigSekret",
+		Addr:     redisAddress,
+		Password: redisPassword,
 		DB:       0, // use default DB
 	})
 
-	var arguments argumentArrayType
-	arguments[0] = "0"
-	arguments[1] = "1"
-	arguments[2] = "2"
+	backEndChannelName := os.Getenv("BE_CHANNEL")
+	frontEndChannelName := os.Getenv("FE_CHANNEL")
 
-	pt := PayloadType{ArgumentSize: 1, Arguments: arguments, PayloadId: "id", PayloadType: "test", ReplyChannel: "front_end"}
+	pt, err := newPayload("id", "payType", frontEndChannelName)
+	if err != nil {
+		log.Panic(err)
+	}
 
 	payload, err := json.Marshal(pt)
 	if err != nil {
 		log.Println(err)
 	}
 
-	channelName := "front_end"
-	err = rdb.Publish(context.Background(), channelName, payload).Err()
+	err = rdb.Publish(context.Background(), backEndChannelName, payload).Err()
 	if err != nil {
 		log.Fatal(err)
 	}

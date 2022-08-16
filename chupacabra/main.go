@@ -15,7 +15,6 @@ const banner = "daring chupacabra 0.0"
 
 func main() {
 	log.Println(banner)
-	log.Println(configuration)
 
 	rand.Seed(time.Now().UnixNano())
 
