@@ -8,7 +8,19 @@ import (
 	"encoding/json"
 	"log"
 
+	"github.com/google/uuid"
+
 	redis "github.com/go-redis/redis/v8"
+)
+
+type payloadEnum int
+
+const (
+	unknownPayload payloadEnum = iota
+	errorPayload
+	okPayload
+	registerPayload
+	unregisterPayload
 )
 
 const maxPayloadArguments = 3
@@ -19,13 +31,40 @@ type PayloadType struct {
 	ArgumentSize int
 	Arguments    argumentArrayType
 	PayloadId    string
-	PayloadType  string
+	PayloadType  payloadEnum
 	ReplyChannel string
 }
 
-func newPayload(id string, payType string, reply string) (*PayloadType, error) {
+func newPayload(id string, payType payloadEnum, reply string) (*PayloadType, error) {
 	result := PayloadType{PayloadId: id, PayloadType: payType, ReplyChannel: reply}
 	return &result, nil
+}
+
+func (pt *PayloadType) newErrorPayload() *PayloadType {
+	result, err := newPayload(pt.PayloadId, errorPayload, pt.ReplyChannel)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return result
+}
+
+func (pt *PayloadType) newOkPayload() *PayloadType {
+	result, err := newPayload(pt.PayloadId, okPayload, pt.ReplyChannel)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return result
+}
+
+func newRegisterPayload(reply string) *PayloadType {
+	result, err := newPayload(uuid.NewString(), registerPayload, reply)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return result
 }
 
 func decodePayload(message *redis.Message) *PayloadType {

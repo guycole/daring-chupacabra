@@ -12,11 +12,29 @@ import (
 )
 
 func handler(pt *PayloadType, replyChannel string, rdb *redis.Client) {
-	response, err := newPayload(pt.PayloadId, "OK", replyChannel)
-	if err != nil {
-		log.Println("new payload failure")
+	/*
+		response, err := newPayload(pt.PayloadId, okPayload, replyChannel)
+		if err != nil {
+			log.Println("new payload failure")
+		}
+	*/
+
+	switch pt.PayloadType {
+	case unknownPayload:
+		//should never get these
+		log.Panic("unknown payload noted")
+	case okPayload:
+		//should never get these
+		log.Panic("ok payload noted")
+	case registerPayload:
+		log.Println("register noted")
+	case unregisterPayload:
+		log.Println("unregister noted")
+	default:
+		log.Panic("unsupported payload type")
 	}
 
+	response := pt.newErrorPayload()
 	log.Println(response)
 
 	publishPayload(response, replyChannel, rdb)

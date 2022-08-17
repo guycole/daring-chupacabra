@@ -83,4 +83,14 @@ info server
 Redist pub/sub channels
 There is always admin_in
 
+redis-cli -a bigSekret
+publish be_channel
 "{\"ArgumentSize\":1,\"Arguments\":[\"0\",\"1\",\"2\"],\"PayloadId\":\"id\",\"PayloadType\":\"test\",\"ReplyChannel\":\"front_end\"}"
+
+
+What do I want?
+Connect w/browser to FE 
+Write from BE every few seconds, shared w/FE websocket clients
+
+There is always a BE_CHANNEL 
+FE registers to BE via BE_CHANNEL (All traffic to BE is written via BE_CHANNEL)

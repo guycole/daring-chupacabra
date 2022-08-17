@@ -15,6 +15,7 @@ COPY go.sum .
 RUN go mod download
 #
 COPY *.go ./
+COPY *.html ./
 #
 RUN go build -o /app/manager
 
