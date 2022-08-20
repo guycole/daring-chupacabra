@@ -35,7 +35,7 @@ func eventManager(emt *eventManagerType) {
 		for ndx := 0; ndx < maxSubscribers; ndx++ {
 			if emt.subscribers[ndx].active {
 				log.Printf("subscriber %d active\n", ndx)
-				result, _ := newPayload("woot", stubPayload, emt.subscribers[ndx].channelName)
+				result := newPayload("woot", stubPayload, emt.subscribers[ndx].channelName)
 				result.publishPayload(emt.subscribers[ndx].channelName, rdb)
 			} else {
 				log.Printf("subscriber %d inactive\n", ndx)

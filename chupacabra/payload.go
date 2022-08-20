@@ -37,9 +37,9 @@ type PayloadType struct {
 	ReplyChannel string
 }
 
-func newPayload(id string, payType payloadEnum, reply string) (*PayloadType, error) {
+func newPayload(id string, payType payloadEnum, reply string) *PayloadType {
 	result := PayloadType{PayloadId: id, PayloadType: payType, ReplyChannel: reply}
-	return &result, nil
+	return &result
 }
 
 func decodePayload(message *redis.Message) *PayloadType {
@@ -55,47 +55,27 @@ func decodePayload(message *redis.Message) *PayloadType {
 }
 
 func (pt *PayloadType) newErrorPayload() *PayloadType {
-	result, err := newPayload(pt.PayloadId, errorPayload, pt.ReplyChannel)
-	if err != nil {
-		log.Panic(err)
-	}
-
+	result := newPayload(pt.PayloadId, errorPayload, pt.ReplyChannel)
 	return result
 }
 
 func (pt *PayloadType) newOkPayload() *PayloadType {
-	result, err := newPayload(pt.PayloadId, okPayload, pt.ReplyChannel)
-	if err != nil {
-		log.Panic(err)
-	}
-
+	result := newPayload(pt.PayloadId, okPayload, pt.ReplyChannel)
 	return result
 }
 
-func (pt *PayloadType) newRegisterPayload(replyChannel string) *PayloadType {
-	result, err := newPayload(uuid.NewString(), registerPayload, replyChannel)
-	if err != nil {
-		log.Panic(err)
-	}
-
+func newRegisterPayload(replyChannel string) *PayloadType {
+	result := newPayload(uuid.NewString(), registerPayload, replyChannel)
 	return result
 }
 
 func (pt *PayloadType) newStubPayload() *PayloadType {
-	result, err := newPayload(pt.PayloadId, stubPayload, pt.ReplyChannel)
-	if err != nil {
-		log.Panic(err)
-	}
-
+	result := newPayload(pt.PayloadId, stubPayload, pt.ReplyChannel)
 	return result
 }
 
 func (pt *PayloadType) newSubscribePayload() *PayloadType {
-	result, err := newPayload(uuid.NewString(), subscribePayload, pt.ReplyChannel)
-	if err != nil {
-		log.Panic(err)
-	}
-
+	result := newPayload(uuid.NewString(), subscribePayload, pt.ReplyChannel)
 	return result
 }
 

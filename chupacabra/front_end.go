@@ -4,32 +4,41 @@
 package main
 
 import (
+	"flag"
 	"log"
-	"os"
+	"net/http"
 	"time"
 )
 
-func frontEnd() {
+func frontEnd2() {
 	log.Println("frontEnd entry")
 
-	rdb := newRedisClient()
+	flag.Parse()
 
-	backEndChannelName := os.Getenv("BE_CHANNEL")
-	frontEndChannelName := os.Getenv("FE_CHANNEL")
+	//rdb := newRedisClient()
 
-	pt, err := newPayload("newId", unknownPayload, frontEndChannelName)
-	if err != nil {
-		log.Panic("tire ripper")
-	}
+	//backEndChannelName := os.Getenv("BE_CHANNEL")
+	//frontEndChannelName := os.Getenv("FE_CHANNEL")
 
-	pt = pt.newRegisterPayload("channel1")
-	pt.publishPayload(backEndChannelName, rdb)
+	//addNewSubscriber("channel1")
+	//addNewSubscriber("channel2")
+	//addNewSubscriber("channel3")
 
-	pt = pt.newRegisterPayload("channel2")
-	pt.publishPayload(backEndChannelName, rdb)
+	/*
+		pt := newPayload("newId", unknownPayload, frontEndChannelName)
+		if err != nil {
+			log.Panic("tire ripper")
+		}
 
-	pt = pt.newRegisterPayload("channel3")
-	pt.publishPayload(backEndChannelName, rdb)
+		pt = pt.newRegisterPayload("channel1")
+		pt.publishPayload(backEndChannelName, rdb)
+
+		pt = pt.newRegisterPayload("channel2")
+		pt.publishPayload(backEndChannelName, rdb)
+
+		pt = pt.newRegisterPayload("channel3")
+		pt.publishPayload(backEndChannelName, rdb)
+	*/
 
 	//http.HandleFunc("/", echo)
 	//http.ListenAndServe(":8080", nil)
@@ -40,37 +49,36 @@ func frontEnd() {
 	}
 }
 
-/*
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL)
+func serveHome(ww http.ResponseWriter, rr *http.Request) {
+	log.Println(rr.URL)
 
-	if r.URL.Path != "/" {
-		http.Error(w, "Not found", http.StatusNotFound)
+	if rr.URL.Path != "/" {
+		http.Error(ww, "not found", http.StatusNotFound)
 		return
 	}
 
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	if rr.Method != http.MethodGet {
+		http.Error(ww, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	http.ServeFile(w, r, "home.html")
+	http.ServeFile(ww, rr, "home.html")
 }
 
 var addr = flag.String("addr", ":8080", "http service address")
 
-func frontEnd2() {
+func frontEnd() {
 	log.Println("frontEnd entry")
 
 	flag.Parse()
 	log.Println(addr)
 
-	hub := newHub()
-	go hub.run()
+	//hub := newHub()
+	//go hub.run()
 
 	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(hub, w, r)
+	http.HandleFunc("/ws", func(ww http.ResponseWriter, rr *http.Request) {
+		serveWs(ww, rr)
 	})
 
 	err := http.ListenAndServe(*addr, nil)
@@ -78,4 +86,3 @@ func frontEnd2() {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
-*/

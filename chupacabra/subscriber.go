@@ -3,6 +3,8 @@
 
 package main
 
+import "log"
+
 type subscriberType struct {
 	active      bool
 	channelName string
@@ -20,7 +22,8 @@ func newSubscriber(channelName string) *subscriberType {
 }
 
 func addNewSubscriber(channelName string) {
-	st := newSubscriber(channelName)
-	pt = pt.newRegisterPayload(channelName)
+	log.Println("ryryryry")
+	//st := newSubscriber(channelName)
+	//pt = pt.newRegisterPayload(channelName)
 	//	pt.publishPayload(backEndChannelName, rdb)
 }
