@@ -9,17 +9,6 @@ import (
 	"time"
 )
 
-type subscriberType struct {
-	active      bool
-	channelName string
-}
-
-// maximum subscriber connections
-const maxSubscribers = 5
-
-//
-type subscriberArrayType [maxSubscribers]subscriberType
-
 type eventManagerType struct {
 	shutDownFlag bool // true, graceful exit
 	subscribers  subscriberArrayType

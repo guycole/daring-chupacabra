@@ -37,6 +37,11 @@ type PayloadType struct {
 	ReplyChannel string
 }
 
+func newPayload(id string, payType payloadEnum, reply string) (*PayloadType, error) {
+	result := PayloadType{PayloadId: id, PayloadType: payType, ReplyChannel: reply}
+	return &result, nil
+}
+
 func decodePayload(message *redis.Message) *PayloadType {
 	var pt PayloadType
 
@@ -47,11 +52,6 @@ func decodePayload(message *redis.Message) *PayloadType {
 	}
 
 	return &pt
-}
-
-func newPayload(id string, payType payloadEnum, reply string) (*PayloadType, error) {
-	result := PayloadType{PayloadId: id, PayloadType: payType, ReplyChannel: reply}
-	return &result, nil
 }
 
 func (pt *PayloadType) newErrorPayload() *PayloadType {
