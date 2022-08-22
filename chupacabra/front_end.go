@@ -7,47 +7,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	"time"
 )
-
-func frontEnd2() {
-	log.Println("frontEnd entry")
-
-	flag.Parse()
-
-	//rdb := newRedisClient()
-
-	//backEndChannelName := os.Getenv("BE_CHANNEL")
-	//frontEndChannelName := os.Getenv("FE_CHANNEL")
-
-	//addNewSubscriber("channel1")
-	//addNewSubscriber("channel2")
-	//addNewSubscriber("channel3")
-
-	/*
-		pt := newPayload("newId", unknownPayload, frontEndChannelName)
-		if err != nil {
-			log.Panic("tire ripper")
-		}
-
-		pt = pt.newRegisterPayload("channel1")
-		pt.publishPayload(backEndChannelName, rdb)
-
-		pt = pt.newRegisterPayload("channel2")
-		pt.publishPayload(backEndChannelName, rdb)
-
-		pt = pt.newRegisterPayload("channel3")
-		pt.publishPayload(backEndChannelName, rdb)
-	*/
-
-	//http.HandleFunc("/", echo)
-	//http.ListenAndServe(":8080", nil)
-
-	for {
-		log.Println("Infinite Loop 2")
-		time.Sleep(time.Second * 10)
-	}
-}
 
 func serveHome(ww http.ResponseWriter, rr *http.Request) {
 	log.Println(rr.URL)
@@ -70,15 +30,14 @@ var addr = flag.String("addr", ":8080", "http service address")
 func frontEnd() {
 	log.Println("frontEnd entry")
 
+	newClientMap()
+
 	flag.Parse()
 	log.Println(addr)
 
-	//hub := newHub()
-	//go hub.run()
-
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", func(ww http.ResponseWriter, rr *http.Request) {
-		serveWs(ww, rr)
+		serveWebSocket(ww, rr)
 	})
 
 	err := http.ListenAndServe(*addr, nil)

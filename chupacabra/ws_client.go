@@ -4,10 +4,12 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"log"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -65,8 +67,10 @@ func (channelName pubSubChannelEnum) String() string {
 }
 
 type wsClientType struct {
-	pubSubChannelName string
+	active            bool
 	connection        *websocket.Conn
+	mootex            sync.Mutex
+	pubSubChannelName string
 	send              chan []byte
 }
 
@@ -79,48 +83,78 @@ var upgrader = websocket.Upgrader{
 
 var wsClientArray wsClientArrayType
 
-func newWsClient(ww http.ResponseWriter, rr *http.Request) (*wsClientType, error) {
-	log.Println("---x---x---x---")
+var wsClientMap map[string]*wsClientType
 
-	var freshChannel int = maxPubSubChannels
+func newClientMap() {
+	wsClientMap = make(map[string]*wsClientType)
+
 	for ndx := 0; ndx < maxPubSubChannels; ndx++ {
-		if wsClientArray[ndx] == nil {
-			log.Printf("assignment %d\n", ndx)
-			freshChannel = ndx
-			break
+		temp := wsClientType{pubSubChannelName: pubSubChannelNames[ndx], active: false}
+		wsClientMap[pubSubChannelNames[ndx]] = &temp
+	}
+}
+
+func selectFreeClient() (string, error) {
+	for key, value := range wsClientMap {
+		if !value.active {
+			return key, nil
 		}
 	}
 
-	if freshChannel >= maxPubSubChannels {
-		return nil, errors.New("pubsub channels full")
+	return "", errors.New("pubsub channels full")
+}
+
+// read message from back end and write to web socket
+func (ws *wsClientType) webSocketProxy() {
+	log.Printf("webSocketProx:%s\n", ws.pubSubChannelName)
+
+	rdb := newRedisClient()
+
+	backEndChannelName := os.Getenv("BE_CHANNEL")
+	pt := newRegisterPayload(ws.pubSubChannelName)
+	pt.publishPayload(backEndChannelName, rdb)
+
+	topic := rdb.Subscribe(context.Background(), ws.pubSubChannelName)
+
+	for {
+		// blocking read
+		message, err := topic.ReceiveMessage(context.Background())
+		if err != nil {
+			log.Println(err)
+			log.Println("backEnd skipping bad receive message")
+			continue
+		}
+
+		log.Printf("fresh message noted:%s\n", ws.pubSubChannelName)
+		log.Println(message)
+
+		//time.Sleep(time.Second * 10)
+
+		pt := decodePayload(message)
+		log.Println(pt)
 	}
+}
+
+func serveWebSocket(ww http.ResponseWriter, rr *http.Request) {
+	log.Println("servWs entry")
+
+	key, err := selectFreeClient()
+	if err != nil {
+		log.Println("selectFromClient error noted")
+		return
+	}
+
+	result := wsClientMap[key]
+	result.mootex.Lock()
+	result.active = true
+	result.mootex.Unlock()
 
 	connection, err := upgrader.Upgrade(ww, rr, nil)
 	if err != nil {
-		log.Println(err)
 		return nil, err
+	} else {
+		result.connection = connection
 	}
 
-	freshChannelName := pubSubChannelNames[freshChannel]
-	log.Println(freshChannelName)
-
-	result := &wsClientType{connection: connection, pubSubChannelName: freshChannelName, send: make(chan []byte, 256)}
-	wsClientArray[freshChannel] = result
-
-	backEndChannelName := os.Getenv("BE_CHANNEL")
-	pt := newRegisterPayload(freshChannelName)
-	pt.publishPayload(backEndChannelName, newRedisClient())
-
-	return result, nil
-}
-
-func serveWs(ww http.ResponseWriter, rr *http.Request) {
-	log.Println("servWs entry")
-
-	client, err := newWsClient(ww, rr)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	log.Println(client)
+	go result.webSocketProxy()
 }

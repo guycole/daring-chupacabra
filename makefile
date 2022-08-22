@@ -14,6 +14,7 @@
 #
 DOCKER = docker
 DARING_CHUPACABRA = daring-chupacabra:1
+GO = go
 HELM = helm
 KUBECTL = kubectl
 MINIKUBE = minikube
@@ -27,11 +28,17 @@ be_deploy:
 docker_build:
 	cd chupacabra; $(DOCKER) build . -t $(DARING_CHUPACABRA)
 
+docker_cleanup:
+	$(DOCKER) rm $$(docker ps -a -f status=exited -q)
+
 fe_delete:
 	$(KUBECTL) delete -f infra/fe-deploy.yaml -n chupacabra
 
 fe_deploy:
 	$(KUBECTL) apply -f infra/fe-deploy.yaml -n chupacabra
+
+fe_url:
+	$(MINIKUBE) service fe-deploy -n chupacabra --url
 
 minikube_reset:
 	$(MINIKUBE) stop
@@ -65,3 +72,6 @@ redis_deploy:
 	$(KUBECTL) apply -f infra/redis-secret.yaml -n chupacabra
 	$(HELM) repo add bitnami https://charts.bitnami.com/bitnami
 	$(HELM) upgrade --debug --install redis bitnami/redis -n chupacabra --version 15.7.6 --values infra/redis-minikube.yaml
+
+test:
+	cd chupacabra; $(GO) test
