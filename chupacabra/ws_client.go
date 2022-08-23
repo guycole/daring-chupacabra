@@ -132,6 +132,18 @@ func (ws *wsClientType) webSocketProxy() {
 
 		pt := decodePayload(message)
 		log.Println(pt)
+
+		w, err := ws.connection.NextWriter(websocket.TextMessage)
+		if err != nil {
+			log.Println("error from next writer")
+			log.Println(err)
+		} else {
+			w.Write([]byte("message from ws_client"))
+		}
+
+		if err := w.Close(); err != nil {
+			log.Println("error from close")
+		}
 	}
 }
 
@@ -151,7 +163,7 @@ func serveWebSocket(ww http.ResponseWriter, rr *http.Request) {
 
 	connection, err := upgrader.Upgrade(ww, rr, nil)
 	if err != nil {
-		return nil, err
+		return
 	} else {
 		result.connection = connection
 	}
