@@ -2,7 +2,7 @@
 Multiuser simulation framework which is implemented in [golang](https://go.dev/) and deploys to [kubernetes](https://kubernetes.io/).
 
 ## Goals
-1. Enable the creation of multiplayer ("real time strategy")[https://en.wikipedia.org/wiki/Real-time_strategy] games.
+1. Enable the creation of multiplayer ["real time strategy"](https://en.wikipedia.org/wiki/Real-time_strategy) games.
 1. Maintains the game board, game tokens, scores and resolves conflict, etc.
 1. Asynchronous status updates to players about game progress.
 1. Implement in [golang](https://go.dev/)
@@ -21,7 +21,7 @@ Multiuser simulation framework which is implemented in [golang](https://go.dev/)
 
 ## Implementation
 1. Three main components: back end (BE), front end (FE), message broker (redis)
-    1. Messages between front and back end are exclusively shared using (Redis)[https://redis.com/] pub/sub.
+    1. Messages between front and back end are exclusively shared using [Redis](https://redis.com/) pub/sub.
     1. front end manages the web sockets and proxys messages between web client and back end via Redis pub/sub.
     1. back end reads manages actual game play, and communicates results to front end via Redis.
 
