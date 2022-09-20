@@ -11,13 +11,8 @@ import (
 	redis "github.com/go-redis/redis/v8"
 )
 
-func handler(pt *PayloadType, replyChannel string, rdb *redis.Client) {
-	/*
-		response, err := newPayload(pt.PayloadId, okPayload, replyChannel)
-		if err != nil {
-			log.Println("new payload failure")
-		}
-	*/
+func handler(emt *eventManagerType, pt *PayloadType, rdb *redis.Client) {
+	response := pt.newErrorPayload()
 
 	switch pt.PayloadType {
 	case unknownPayload:
@@ -28,32 +23,36 @@ func handler(pt *PayloadType, replyChannel string, rdb *redis.Client) {
 		log.Panic("ok payload noted")
 	case registerPayload:
 		log.Println("register noted")
+		emt.subscriberAdd(pt.ReplyChannel)
+		response = pt.newSubscribePayload()
 	case unregisterPayload:
+		// always succeeds
 		log.Println("unregister noted")
+		emt.subscriberDelete(pt.ReplyChannel)
+		response = pt.newOkPayload()
 	default:
 		log.Panic("unsupported payload type")
 	}
 
-	response := pt.newErrorPayload()
-	log.Println(response)
-
-	publishPayload(response, replyChannel, rdb)
+	response.publishPayload(response.ReplyChannel, rdb)
 }
 
 func backEnd() {
 	log.Println("backEnd entry")
 
-	redisAddress := os.Getenv("REDIS_ADDRESS")
-	log.Println(redisAddress)
+	var emt eventManagerType
 
-	redisPassword := os.Getenv("REDIS_PASSWORD")
-	log.Println(redisPassword)
+	emt.turnCounter = 0
+	emt.shutDownFlag = false
 
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     redisAddress,
-		Password: redisPassword,
-		DB:       0, // use default DB
-	})
+	for ndx := 0; ndx < maxSubscribers; ndx++ {
+		log.Printf("sub %d\n", ndx)
+		emt.subscribers[ndx].active = false
+	}
+
+	rdb := newRedisClient()
+
+	go eventManager(&emt)
 
 	channelName := os.Getenv("BE_CHANNEL")
 	log.Println(channelName)
@@ -77,6 +76,6 @@ func backEnd() {
 		pt := decodePayload(message)
 		log.Println(pt)
 
-		handler(pt, pt.ReplyChannel, rdb)
+		handler(&emt, pt, rdb)
 	}
 }

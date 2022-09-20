@@ -18,16 +18,13 @@ HELM = helm
 KUBECTL = kubectl
 MINIKUBE = minikube
 
-be_build:
-	cd chupacabra; $(DOCKER) build . -t $(DARING_CHUPACABRA)
-
 be_delete:
 	$(KUBECTL) delete -f infra/be-deploy.yaml
 
 be_deploy:
 	$(KUBECTL) apply -f infra/be-deploy.yaml
 
-fe_build:
+docker_build:
 	cd chupacabra; $(DOCKER) build . -t $(DARING_CHUPACABRA)
 
 fe_delete:

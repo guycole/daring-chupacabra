@@ -7,36 +7,29 @@ import (
 	"log"
 	"os"
 	"time"
-
-	redis "github.com/go-redis/redis/v8"
 )
 
 func frontEnd() {
 	log.Println("frontEnd entry")
 
-	redisAddress := os.Getenv("REDIS_ADDRESS")
-	log.Println(redisAddress)
-
-	redisPassword := os.Getenv("REDIS_PASSWORD")
-	log.Println(redisPassword)
-
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     redisAddress,
-		Password: redisPassword,
-		DB:       0, // use default DB
-	})
+	rdb := newRedisClient()
 
 	backEndChannelName := os.Getenv("BE_CHANNEL")
-	//frontEndChannelName := os.Getenv("FE_CHANNEL")
+	frontEndChannelName := os.Getenv("FE_CHANNEL")
 
-	pt := newRegisterPayload("channel1")
-	publishPayload(pt, backEndChannelName, rdb)
+	pt, err := newPayload("newId", unknownPayload, frontEndChannelName)
+	if err != nil {
+		log.Panic("tire ripper")
+	}
 
-	pt = newRegisterPayload("channel2")
-	publishPayload(pt, backEndChannelName, rdb)
+	pt = pt.newRegisterPayload("channel1")
+	pt.publishPayload(backEndChannelName, rdb)
 
-	pt = newRegisterPayload("channel3")
-	publishPayload(pt, backEndChannelName, rdb)
+	pt = pt.newRegisterPayload("channel2")
+	pt.publishPayload(backEndChannelName, rdb)
+
+	pt = pt.newRegisterPayload("channel3")
+	pt.publishPayload(backEndChannelName, rdb)
 
 	//http.HandleFunc("/", echo)
 	//http.ListenAndServe(":8080", nil)

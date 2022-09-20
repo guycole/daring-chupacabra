@@ -20,6 +20,8 @@ const (
 	errorPayload
 	okPayload
 	registerPayload
+	stubPayload
+	subscribePayload
 	unregisterPayload
 )
 
@@ -33,6 +35,18 @@ type PayloadType struct {
 	PayloadId    string
 	PayloadType  payloadEnum
 	ReplyChannel string
+}
+
+func decodePayload(message *redis.Message) *PayloadType {
+	var pt PayloadType
+
+	err := json.Unmarshal([]byte(message.Payload), &pt)
+	if err != nil {
+		log.Println(err)
+		log.Println("skipping bad unmarshal")
+	}
+
+	return &pt
 }
 
 func newPayload(id string, payType payloadEnum, reply string) (*PayloadType, error) {
@@ -58,8 +72,8 @@ func (pt *PayloadType) newOkPayload() *PayloadType {
 	return result
 }
 
-func newRegisterPayload(reply string) *PayloadType {
-	result, err := newPayload(uuid.NewString(), registerPayload, reply)
+func (pt *PayloadType) newRegisterPayload(replyChannel string) *PayloadType {
+	result, err := newPayload(uuid.NewString(), registerPayload, replyChannel)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -67,24 +81,31 @@ func newRegisterPayload(reply string) *PayloadType {
 	return result
 }
 
-func decodePayload(message *redis.Message) *PayloadType {
-	var pt PayloadType
-
-	err := json.Unmarshal([]byte(message.Payload), &pt)
+func (pt *PayloadType) newStubPayload() *PayloadType {
+	result, err := newPayload(pt.PayloadId, stubPayload, pt.ReplyChannel)
 	if err != nil {
-		log.Println(err)
-		log.Println("skipping bad unmarshal")
+		log.Panic(err)
 	}
 
-	return &pt
+	return result
 }
 
-func publishPayload(pt *PayloadType, channelName string, rdb *redis.Client) {
+func (pt *PayloadType) newSubscribePayload() *PayloadType {
+	result, err := newPayload(uuid.NewString(), subscribePayload, pt.ReplyChannel)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return result
+}
+
+func (pt *PayloadType) publishPayload(channelName string, rdb *redis.Client) {
 	payload, err := json.Marshal(pt)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	log.Printf("publish to channel %s\n", channelName)
 	err = rdb.Publish(context.Background(), channelName, payload).Err()
 	if err != nil {
 		log.Fatal(err)
