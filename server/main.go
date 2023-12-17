@@ -5,7 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 
@@ -29,6 +31,8 @@ const banner = "chupacapra-server 0.0"
 
 func main() {
 	flag.Parse()
+
+	rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	log.Println(banner)
 
