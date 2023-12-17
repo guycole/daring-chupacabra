@@ -9,6 +9,8 @@ service Chupacabra {
   rpc EnqueueSubmit(EnqueueRequest) returns (EnqueueResponse) {}
 }
 
+messag
+
 message EnqueueRequest {
   int32 execute_turn = 1;
   string message = 2;
