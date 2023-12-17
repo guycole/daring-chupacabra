@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	pb "github.com/guycole/daring-chupacabra/proto"
+	pb "github.com/guycole/daring-chupacabra/proto/chupacabra.pb"
 )
 
 var (
@@ -16,7 +16,7 @@ type server struct {
 	pb.UnimplementedGreeterServer
 }
 
-
+/*
 // SayHello implements helloworld.GreeterServer
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	log.Printf("Received: %v", in.GetName())
