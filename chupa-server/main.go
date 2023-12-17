@@ -3,18 +3,19 @@ package main
 import (
 	"flag"
 	"log"
-
-	pb "github.com/guycole/daring-chupacabra/proto/chupacabra.pb"
+	// pb "github.com/guycole/daring-chupacabra/proto/chupacabra.pb.go"
 )
 
 var (
 	port = flag.Int("port", 50051, "server port")
 )
 
+/*
 // server is used to implement helloworld.GreeterServer.
 type server struct {
 	pb.UnimplementedGreeterServer
 }
+*/
 
 /*
 // SayHello implements helloworld.GreeterServer
@@ -26,10 +27,21 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 
 const banner = "chupa-server 0.0"
 
+// Remove the duplicate package declaration
+// package main
+
+var (
+	port = flag.Int("port", 50051, "server port")
+)
+
 func main() {
 	flag.Parse()
 
 	log.Println(banner)
+
+	sr := &SubmitRequest{}
+	log.Printf("sr: %v", sr)
+
 	/*
 	   lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 

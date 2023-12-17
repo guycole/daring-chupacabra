@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option go_package = "github.com/guycole/daring-chupacabra/proto";
 
-package chupacabra;
+// package proto;
 
 // 
 service Chupacabra {

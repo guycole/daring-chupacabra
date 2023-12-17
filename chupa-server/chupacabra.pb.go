@@ -4,7 +4,7 @@
 // 	protoc        v4.25.1
 // source: chupacabra.proto
 
-package proto
+package main
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
