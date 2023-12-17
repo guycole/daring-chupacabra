@@ -1,22 +1,21 @@
-
 syntax = "proto3";
 
-option go_package = "github.com/guycole/daring-chupacabra/chupacabra";
+option go_package = "github.com/guycole/daring-chupacabra/proto";
 
 package chupacabra;
 
 // 
 service Chupacabra {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc EventQueueSubmit(SubmitRequest) returns (SubmitResponse) {}
 }
 
-// 
-message HelloRequest {
-  string name = 1;
+message SubmitRequest {
+  int32 execute_turn = 1;
+  string message = 2;
+  string owner = 3;
 }
 
-// 
-message HelloReply {
-  string message = 1;
+message SubmitResponse {
+  int32 request_status = 1;
+  string token = 2;
 }
