@@ -2,20 +2,20 @@ syntax = "proto3";
 
 option go_package = "github.com/guycole/daring-chupacabra/proto";
 
-// package proto;
+package proto;
 
 // 
 service Chupacabra {
-  rpc EventQueueSubmit(SubmitRequest) returns (SubmitResponse) {}
+  rpc EnqueueSubmit(EnqueueRequest) returns (EnqueueResponse) {}
 }
 
-message SubmitRequest {
+message EnqueueRequest {
   int32 execute_turn = 1;
   string message = 2;
   string owner = 3;
 }
 
-message SubmitResponse {
+message EnqueueResponse {
   int32 request_status = 1;
   string token = 2;
 }

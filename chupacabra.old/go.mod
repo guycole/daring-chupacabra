@@ -10,3 +10,5 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/prometheus/client_golang v1.12.2
 )
+
+replace google.golang.org/grpc => ../
