@@ -1,31 +1,17 @@
 package main
 
 import (
-	"context"
 	"flag"
-	"fmt"
 	"log"
 	"math/rand"
-	"net"
+	"os"
+	"strconv"
 	"time"
-
-	"google.golang.org/grpc"
-
-	pb "github.com/guycole/daring-chupacabra/proto"
 )
 
-var (
-	port = flag.Int("port", 50051, "server port")
-)
-
-type server struct {
-	pb.UnimplementedChupacabraServer
-}
-
-func (ss *server) EnqueueSubmit(ctx context.Context, in *pb.EnqueueRequest) (*pb.EnqueueResponse, error) {
-	log.Printf("Received: %v", in)
-	return &pb.EnqueueResponse{RequestStatus: 11, Token: "woot"}, nil
-}
+//var (
+//	rpcPort = flag.Int("port", 50051, "server port")
+//)
 
 const banner = "chupacapra-server 0.0"
 
@@ -36,17 +22,45 @@ func main() {
 
 	log.Println(banner)
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	sugarLog := zapSetup(false)
+	sugarLog.Info(banner)
 
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+	var configurationFilename string
+
+	app := AppType{SugarLog: sugarLog}
+
+	envVars := [...]string{"CONFIGURATION_FILENAME", "FEATURE_FLAGS", "GRPC_PORT"}
+
+	for index, element := range envVars {
+		temp, err := os.LookupEnv(element)
+		if err {
+			sugarLog.Infof("%d:%s:%s", index, element, temp)
+		} else {
+			sugarLog.Fatal("missing:", element)
+		}
+
+		switch element {
+		case "CONFIGURATION_FILENAME":
+			configurationFilename = temp
+		case "FEATURE_FLAGS":
+			temp, err := strconv.Atoi(temp)
+			if err == nil {
+				app.FeatureFlags = uint32(temp)
+			} else {
+				sugarLog.Fatal("bad featureFlags")
+			}
+		case "GRPC_PORT":
+			temp, err := strconv.Atoi(temp)
+			if err == nil {
+				app.GrpcPort = temp
+			} else {
+				sugarLog.Fatal("bad grpcPort")
+			}
+		default:
+			sugarLog.Fatal("unknown environment var:", element)
+		}
 	}
 
-	ss := grpc.NewServer()
-	pb.RegisterChupacabraServer(ss, &server{})
-	log.Printf("server listening at %v", lis.Addr())
-
-	if err := ss.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+	app.initialize(configurationFilename)
+	app.run()
 }
