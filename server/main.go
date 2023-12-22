@@ -22,21 +22,19 @@ func main() {
 
 	log.Println(banner)
 
-	sugarLog := zapSetup(false)
-	sugarLog.Info(banner)
-
 	var configurationFilename string
 
-	app := AppType{SugarLog: sugarLog}
+	app := AppType{SugarLog: zapSetup(false)}
+	app.SugarLog.Info(banner)
 
 	envVars := [...]string{"CONFIGURATION_FILENAME", "FEATURE_FLAGS", "GRPC_PORT"}
 
 	for index, element := range envVars {
 		temp, err := os.LookupEnv(element)
 		if err {
-			sugarLog.Infof("%d:%s:%s", index, element, temp)
+			app.SugarLog.Infof("%d:%s:%s", index, element, temp)
 		} else {
-			sugarLog.Fatal("missing:", element)
+			app.SugarLog.Fatal("missing:", element)
 		}
 
 		switch element {
@@ -47,17 +45,17 @@ func main() {
 			if err == nil {
 				app.FeatureFlags = uint32(temp)
 			} else {
-				sugarLog.Fatal("bad featureFlags")
+				app.SugarLog.Fatal("bad featureFlags")
 			}
 		case "GRPC_PORT":
 			temp, err := strconv.Atoi(temp)
 			if err == nil {
 				app.GrpcPort = temp
 			} else {
-				sugarLog.Fatal("bad grpcPort")
+				app.SugarLog.Fatal("bad grpcPort")
 			}
 		default:
-			sugarLog.Fatal("unknown environment var:", element)
+			app.SugarLog.Fatal("unknown environment var:", element)
 		}
 	}
 
