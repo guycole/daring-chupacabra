@@ -7,7 +7,22 @@ import (
 	"errors"
 )
 
+type EventActionEnum int
+
+const (
+	nothingAction EventActionEnum = iota
+	createAction
+	deleteAction
+	houseKeepingAction
+	moveAction
+)
+
+func (eae EventActionEnum) String() string {
+	return [...]string{"nothing", "create", "delete", "housekeeping", "move"}[eae]
+}
+
 type EventNodeType struct {
+	Action EventActionEnum
 	ItemID string
 	Next   *EventNodeType
 }
@@ -17,8 +32,8 @@ type EventNodeHeaderType struct {
 	Next       *EventNodeType
 }
 
-func (eventNodeHeader *EventNodeHeaderType) insertNode(itemID string) {
-	candidate := EventNodeType{ItemID: itemID, Next: nil}
+func (eventNodeHeader *EventNodeHeaderType) insertNode(action EventActionEnum, itemID string) {
+	candidate := EventNodeType{Action: action, ItemID: itemID, Next: nil}
 
 	if eventNodeHeader.Population == 0 {
 		eventNodeHeader.Next = &candidate

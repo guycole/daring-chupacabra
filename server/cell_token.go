@@ -3,21 +3,9 @@
 
 package main
 
-type CellTokenEnum int
-
-const (
-	vacantToken CellTokenEnum = iota
-	obj1Token
-	obj2Token
-)
-
-func (cte CellTokenEnum) String() string {
-	return [...]string{"vacant", "obj1", "obj2"}[cte]
-}
-
 type CellTokenType struct {
 	ItemID     string // same as catalog item ID
-	OccupiedBy CellTokenEnum
+	OccupiedBy CatalogTokenEnum
 }
 
 func (ctt *CellTokenType) clearToken() {
@@ -33,7 +21,7 @@ func (ctt *CellTokenType) isVacant() bool {
 	return false
 }
 
-func (ctt *CellTokenType) updateToken(itemID string, occupiedBy CellTokenEnum) {
+func (ctt *CellTokenType) updateToken(itemID string, occupiedBy CatalogTokenEnum) {
 	ctt.ItemID = itemID
 	ctt.OccupiedBy = occupiedBy
 }

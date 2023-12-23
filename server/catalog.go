@@ -5,8 +5,22 @@ package main
 
 import "errors"
 
+type CatalogTokenEnum int
+
+const (
+	vacantToken CatalogTokenEnum = iota
+	obj1Token
+	obj2Token
+)
+
+func (cte CatalogTokenEnum) String() string {
+	return [...]string{"vacant", "obj1", "obj2"}[cte]
+}
+
 type CatalogItemType struct {
-	ItemID string
+	ItemID   string
+	Location *LocationType
+	Token    CatalogTokenEnum
 }
 
 type CatalogMapType map[string]*CatalogItemType
@@ -16,12 +30,20 @@ func initializeCatalogMap() *CatalogMapType {
 	return &catalogMap
 }
 
+/*
+type StateMapInterface interface {
+	getItemID() string
+	getLocation() LocationType
+	getToken() CatalogTokenEnum
+}
+*/
+
 func (catalogMap *CatalogMapType) deleteItem(itemID string) {
 	delete(*catalogMap, itemID)
 }
 
-func (catalogMap *CatalogMapType) insertItem(itemID string) {
-	catalogItem := CatalogItemType{ItemID: itemID}
+func (catalogMap *CatalogMapType) insertItem(itemID string, location *LocationType, token CatalogTokenEnum) {
+	catalogItem := CatalogItemType{ItemID: itemID, Location: location, Token: token}
 	(*catalogMap)[itemID] = &catalogItem
 }
 

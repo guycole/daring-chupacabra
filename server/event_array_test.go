@@ -31,15 +31,16 @@ func TestEventArrayOperations(t *testing.T) {
 	eventArray := initializeEventArray()
 
 	tests := []struct {
+		action    EventActionEnum
 		candidate string
 		turn      int
 	}{
-		{"81837d8a-2925-4b52-ab4f-31177a6b2f83", turn},
-		{"4d0c6caa-5ad4-4505-b3d2-e951f5c838fc", turn + 100},
+		{houseKeepingAction, "81837d8a-2925-4b52-ab4f-31177a6b2f83", turn},
+		{moveAction, "4d0c6caa-5ad4-4505-b3d2-e951f5c838fc", turn + 100},
 	}
 
 	for _, ndx := range tests {
-		eventArray.insertNode(ndx.candidate, ndx.turn)
+		eventArray.insertNode(ndx.action, ndx.candidate, ndx.turn)
 	}
 
 	if eventArray[turn].Population != 2 {

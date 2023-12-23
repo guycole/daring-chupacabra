@@ -9,19 +9,19 @@ import (
 
 func TestCellToken(t *testing.T) {
 	tests := []struct {
-		candidate string
-		cellType  CellTokenEnum
+		candidate  string
+		occupiedBy CatalogTokenEnum
 	}{
 		{"81837d8a-2925-4b52-ab4f-31177a6b2f83", obj1Token},
 		{"4d0c6caa-5ad4-4505-b3d2-e951f5c838fc", obj2Token},
 	}
 
 	for _, ndx := range tests {
-		cellTokenType := &CellTokenType{ItemID: ndx.candidate, OccupiedBy: ndx.cellType}
+		cellTokenType := &CellTokenType{ItemID: ndx.candidate, OccupiedBy: ndx.occupiedBy}
 		if cellTokenType.ItemID != ndx.candidate {
 			t.Errorf("TestCellToken failure")
 		}
-		if cellTokenType.OccupiedBy != ndx.cellType {
+		if cellTokenType.OccupiedBy != ndx.occupiedBy {
 			t.Errorf("TestCellToken failure")
 		}
 

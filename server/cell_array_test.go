@@ -11,9 +11,9 @@ func TestCellArray(t *testing.T) {
 	cellArray := initializeCellArray()
 
 	tests := []struct {
-		candidate string
-		cellType  CellTokenEnum
-		yy, xx    int
+		candidate  string
+		occupiedBy CatalogTokenEnum
+		yy, xx     int
 	}{
 		{"81837d8a-2925-4b52-ab4f-31177a6b2f83", obj1Token, 3, 3},
 		{"4d0c6caa-5ad4-4505-b3d2-e951f5c838fc", obj2Token, 5, 5},
@@ -21,13 +21,13 @@ func TestCellArray(t *testing.T) {
 
 	for _, ndx := range tests {
 		location1 := &LocationType{YY: ndx.yy, XX: ndx.xx}
-		cellArray.updateCell(location1, ndx.candidate, ndx.cellType)
+		cellArray.updateCell(ndx.candidate, location1, ndx.occupiedBy)
 
 		cellTokenType1 := cellArray[ndx.yy][ndx.xx]
 		if cellTokenType1.ItemID != ndx.candidate {
 			t.Errorf("TestCellToken failure")
 		}
-		if cellTokenType1.OccupiedBy != ndx.cellType {
+		if cellTokenType1.OccupiedBy != ndx.occupiedBy {
 			t.Errorf("TestCellToken failure")
 		}
 
@@ -42,7 +42,7 @@ func TestCellArray(t *testing.T) {
 		if cellTokenType2.ItemID != ndx.candidate {
 			t.Errorf("TestCellToken failure")
 		}
-		if cellTokenType2.OccupiedBy != ndx.cellType {
+		if cellTokenType2.OccupiedBy != ndx.occupiedBy {
 			t.Errorf("TestCellToken failure")
 		}
 	}

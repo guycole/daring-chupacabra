@@ -56,7 +56,7 @@ func (cat *CellArrayType) moveCell(source, destination *LocationType) error {
 	return nil
 }
 
-func (cat *CellArrayType) updateCell(location *LocationType, itemID string, occupiedBy CellTokenEnum) error {
+func (cat *CellArrayType) updateCell(itemID string, location *LocationType, occupiedBy CatalogTokenEnum) error {
 	if !location.legalLocation(maxCellArraySideY, maxCellArraySideX) {
 		return errors.New("bad cell location")
 	}
