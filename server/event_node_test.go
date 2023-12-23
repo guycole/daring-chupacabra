@@ -1,10 +1,13 @@
+// Copyright 2023 Guy Cole. All rights reserved.
+// Use of this source code is governed by a GPL-3 license that can be found in the LICENSE file.
+
 package main
 
 import (
 	"testing"
 )
 
-func TestEventNodeOperations(t *testing.T) {
+func TestEventNodeHeader(t *testing.T) {
 	tests := []struct {
 		candidate string
 	}{
@@ -15,14 +18,14 @@ func TestEventNodeOperations(t *testing.T) {
 	eventNodeHeader := EventNodeHeaderType{Population: 0, Next: nil}
 
 	for _, ndx := range tests {
-		eventNodeHeader.insert(ndx.candidate)
+		eventNodeHeader.insertNode(ndx.candidate)
 	}
 
 	if eventNodeHeader.Population != 2 {
 		t.Errorf("TestEventNodeOperations failure")
 	}
 
-	temp1, err1 := eventNodeHeader.selectNext()
+	temp1, err1 := eventNodeHeader.selectNextNode()
 	if err1 != nil {
 		t.Errorf("TestEventNodeOperations failure")
 	}
@@ -33,7 +36,7 @@ func TestEventNodeOperations(t *testing.T) {
 		t.Errorf("TestEventNodeOperations failure")
 	}
 
-	temp2, err2 := eventNodeHeader.selectNext()
+	temp2, err2 := eventNodeHeader.selectNextNode()
 	if err2 != nil {
 		t.Errorf("TestEventNodeOperations failure")
 	}
@@ -44,7 +47,7 @@ func TestEventNodeOperations(t *testing.T) {
 		t.Errorf("TestEventNodeOperations failure")
 	}
 
-	_, err3 := eventNodeHeader.selectNext()
+	_, err3 := eventNodeHeader.selectNextNode()
 	if err3 == nil {
 		t.Errorf("TestEventNodeOperations failure")
 	}

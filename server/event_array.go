@@ -1,3 +1,6 @@
+// Copyright 2023 Guy Cole. All rights reserved.
+// Use of this source code is governed by a GPL-3 license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -29,13 +32,13 @@ func (eventArray *EventArrayType) dumper() {
 	}
 }
 
-func (eventArray *EventArrayType) insert(itemID string, turn int) {
+func (eventArray *EventArrayType) insertNode(itemID string, turn int) {
 	ndx := turn % maxEventNodeHeader
-	eventArray[ndx].insert(itemID)
+	eventArray[ndx].insertNode(itemID)
 }
 
-func (eventArray *EventArrayType) selectNext(turn int) (*EventNodeType, error) {
+func (eventArray *EventArrayType) selectNextNode(turn int) (*EventNodeType, error) {
 	ndx := turn % maxEventNodeHeader
-	result, err := eventArray[ndx].selectNext()
+	result, err := eventArray[ndx].selectNextNode()
 	return result, err
 }

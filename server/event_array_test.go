@@ -1,3 +1,6 @@
+// Copyright 2023 Guy Cole. All rights reserved.
+// Use of this source code is governed by a GPL-3 license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -36,14 +39,14 @@ func TestEventArrayOperations(t *testing.T) {
 	}
 
 	for _, ndx := range tests {
-		eventArray.insert(ndx.candidate, ndx.turn)
+		eventArray.insertNode(ndx.candidate, ndx.turn)
 	}
 
 	if eventArray[turn].Population != 2 {
 		t.Errorf("TestEventArrayOperations failure")
 	}
 
-	temp1, err1 := eventArray.selectNext(turn)
+	temp1, err1 := eventArray.selectNextNode(turn)
 	if err1 != nil {
 		t.Errorf("TestEventArrayOperations failure")
 	}
@@ -54,7 +57,7 @@ func TestEventArrayOperations(t *testing.T) {
 		t.Errorf("TestEventArrayOperations failure")
 	}
 
-	temp2, err2 := eventArray.selectNext(turn)
+	temp2, err2 := eventArray.selectNextNode(turn)
 	if err2 != nil {
 		t.Errorf("TestEventArrayOperations failure")
 	}
@@ -65,7 +68,7 @@ func TestEventArrayOperations(t *testing.T) {
 		t.Errorf("TestEventArrayOperations failure")
 	}
 
-	_, err3 := eventArray.selectNext(turn)
+	_, err3 := eventArray.selectNextNode(turn)
 	if err3 == nil {
 		t.Errorf("TestEventArrayOperations failure")
 	}

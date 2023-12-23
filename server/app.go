@@ -1,3 +1,6 @@
+// Copyright 2023 Guy Cole. All rights reserved.
+// Use of this source code is governed by a GPL-3 license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -19,7 +22,9 @@ type AppType struct {
 	SugarLog      *zap.SugaredLogger
 
 	TurnCounter int
+	CellArray   *CellArrayType
 	EventArray  *EventArrayType
+	CatalogMap  *CatalogMapType
 }
 
 func (at *AppType) runaturn() time.Duration {
@@ -64,13 +69,10 @@ func (at *AppType) initialize(configurationFilename string) {
 	at.Configuration = &ConfigurationType{ConfigurationFilename: configurationFilename}
 	at.Configuration.initialize(at.SugarLog)
 
+	// in the beginning...
+	at.CatalogMap = initializeCatalogMap()
+	at.CellArray = initializeCellArray()
 	at.EventArray = initializeEventArray()
-	/*
-		at.EventArray.insert("item1", 101)
-		at.EventArray.insert("item2", 12)
-		at.EventArray.insert("item3", 12)
-		at.EventArray.dumper()
-	*/
 }
 
 // Run pacifier
@@ -87,7 +89,7 @@ func (at *AppType) run() {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterChupacabraServer(grpcServer, &serverType{})
+	pb.RegisterChupacabraServer(grpcServer, &ServerType{})
 	at.SugarLog.Infof("server listening at %v", listener.Addr())
 
 	//	if err := grpcServer.Serve(listener); err != nil {

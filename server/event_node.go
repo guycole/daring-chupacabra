@@ -1,3 +1,6 @@
+// Copyright 2023 Guy Cole. All rights reserved.
+// Use of this source code is governed by a GPL-3 license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -14,7 +17,7 @@ type EventNodeHeaderType struct {
 	Next       *EventNodeType
 }
 
-func (eventNodeHeader *EventNodeHeaderType) insert(itemID string) {
+func (eventNodeHeader *EventNodeHeaderType) insertNode(itemID string) {
 	candidate := EventNodeType{ItemID: itemID, Next: nil}
 
 	if eventNodeHeader.Population == 0 {
@@ -27,12 +30,12 @@ func (eventNodeHeader *EventNodeHeaderType) insert(itemID string) {
 	eventNodeHeader.Population++
 }
 
-func (eventNodeHeader *EventNodeHeaderType) selectNext() (*EventNodeType, error) {
+func (eventNodeHeader *EventNodeHeaderType) selectNextNode() (*EventNodeType, error) {
 	var result *EventNodeType
 
 	switch eventNodeHeader.Population {
 	case 0:
-		return nil, errors.New("empty list")
+		return nil, errors.New("empty event list")
 	case 1:
 		result = eventNodeHeader.Next
 		eventNodeHeader.Next = nil
