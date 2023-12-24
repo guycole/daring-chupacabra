@@ -21,7 +21,7 @@ func (ctt *CellTokenType) isVacant() bool {
 	return false
 }
 
-func (ctt *CellTokenType) updateToken(itemID string, occupiedBy CatalogTokenEnum) {
-	ctt.ItemID = itemID
+func (ctt *CellTokenType) updateToken(id string, occupiedBy CatalogTokenEnum) {
+	ctt.ItemID = id
 	ctt.OccupiedBy = occupiedBy
 }

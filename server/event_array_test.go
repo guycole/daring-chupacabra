@@ -33,14 +33,15 @@ func TestEventArrayOperations(t *testing.T) {
 	tests := []struct {
 		action    EventActionEnum
 		candidate string
+		token     CatalogTokenEnum
 		turn      int
 	}{
-		{houseKeepingAction, "81837d8a-2925-4b52-ab4f-31177a6b2f83", turn},
-		{moveAction, "4d0c6caa-5ad4-4505-b3d2-e951f5c838fc", turn + 100},
+		{houseKeepingAction, "81837d8a-2925-4b52-ab4f-31177a6b2f83", obj1Token, turn},
+		{moveAction, "4d0c6caa-5ad4-4505-b3d2-e951f5c838fc", obj2Token, turn + 100},
 	}
 
 	for _, ndx := range tests {
-		eventArray.insertNode(ndx.action, ndx.candidate, ndx.turn)
+		eventArray.insertNode(ndx.action, ndx.candidate, ndx.token, ndx.turn)
 	}
 
 	if eventArray[turn].Population != 2 {
@@ -54,6 +55,10 @@ func TestEventArrayOperations(t *testing.T) {
 	if temp1.ItemID != tests[1].candidate {
 		t.Errorf("TestEventArrayOperations failure")
 	}
+	if temp1.CatalogToken != tests[1].token {
+		t.Errorf("TestEventArrayOperations failure")
+	}
+
 	if eventArray[turn].Population != 1 {
 		t.Errorf("TestEventArrayOperations failure")
 	}
@@ -65,6 +70,10 @@ func TestEventArrayOperations(t *testing.T) {
 	if temp2.ItemID != tests[0].candidate {
 		t.Errorf("TestEventArrayOperations failure")
 	}
+	if temp2.CatalogToken != tests[0].token {
+		t.Errorf("TestEventArrayOperations failure")
+	}
+
 	if eventArray[turn].Population != 0 {
 		t.Errorf("TestEventArrayOperations failure")
 	}

@@ -22,9 +22,10 @@ func (eae EventActionEnum) String() string {
 }
 
 type EventNodeType struct {
-	Action EventActionEnum
-	ItemID string
-	Next   *EventNodeType
+	Action       EventActionEnum
+	CatalogToken CatalogTokenEnum
+	ItemID       string
+	Next         *EventNodeType
 }
 
 type EventNodeHeaderType struct {
@@ -32,8 +33,8 @@ type EventNodeHeaderType struct {
 	Next       *EventNodeType
 }
 
-func (eventNodeHeader *EventNodeHeaderType) insertNode(action EventActionEnum, itemID string) {
-	candidate := EventNodeType{Action: action, ItemID: itemID, Next: nil}
+func (eventNodeHeader *EventNodeHeaderType) insertNode(action EventActionEnum, id string, token CatalogTokenEnum) {
+	candidate := EventNodeType{Action: action, CatalogToken: token, ItemID: id, Next: nil}
 
 	if eventNodeHeader.Population == 0 {
 		eventNodeHeader.Next = &candidate

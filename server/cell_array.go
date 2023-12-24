@@ -7,8 +7,8 @@ import (
 	"errors"
 )
 
-const maxCellArraySideX = 75
-const maxCellArraySideY = 75
+const maxCellArraySideX = 50
+const maxCellArraySideY = 50
 
 type CellArrayType [maxCellArraySideX][maxCellArraySideY]*CellTokenType
 
@@ -56,14 +56,14 @@ func (cat *CellArrayType) moveCell(source, destination *LocationType) error {
 	return nil
 }
 
-func (cat *CellArrayType) updateCell(itemID string, location *LocationType, occupiedBy CatalogTokenEnum) error {
+func (cat *CellArrayType) updateCell(id string, location *LocationType, occupiedBy CatalogTokenEnum) error {
 	if !location.legalLocation(maxCellArraySideY, maxCellArraySideX) {
 		return errors.New("bad cell location")
 	}
 
 	target := cat[location.YY][location.XX]
 
-	target.ItemID = itemID
+	target.ItemID = id
 	target.OccupiedBy = occupiedBy
 
 	return nil

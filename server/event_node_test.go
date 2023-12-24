@@ -11,15 +11,16 @@ func TestEventNodeHeader(t *testing.T) {
 	tests := []struct {
 		action    EventActionEnum
 		candidate string
+		token     CatalogTokenEnum
 	}{
-		{houseKeepingAction, "81837d8a-2925-4b52-ab4f-31177a6b2f83"},
-		{moveAction, "4d0c6caa-5ad4-4505-b3d2-e951f5c838fc"},
+		{houseKeepingAction, "81837d8a-2925-4b52-ab4f-31177a6b2f83", obj1Token},
+		{moveAction, "4d0c6caa-5ad4-4505-b3d2-e951f5c838fc", obj2Token},
 	}
 
 	eventNodeHeader := EventNodeHeaderType{Population: 0, Next: nil}
 
 	for _, ndx := range tests {
-		eventNodeHeader.insertNode(ndx.action, ndx.candidate)
+		eventNodeHeader.insertNode(ndx.action, ndx.candidate, ndx.token)
 	}
 
 	if eventNodeHeader.Population != 2 {
@@ -36,6 +37,10 @@ func TestEventNodeHeader(t *testing.T) {
 	if temp1.ItemID != tests[1].candidate {
 		t.Errorf("TestEventNodeOperations failure")
 	}
+	if temp1.CatalogToken != tests[1].token {
+		t.Errorf("TestEventNodeOperations failure")
+	}
+
 	if eventNodeHeader.Population != 1 {
 		t.Errorf("TestEventNodeOperations failure")
 	}
@@ -50,6 +55,10 @@ func TestEventNodeHeader(t *testing.T) {
 	if temp2.ItemID != tests[0].candidate {
 		t.Errorf("TestEventNodeOperations failure")
 	}
+	if temp2.CatalogToken != tests[0].token {
+		t.Errorf("TestEventNodeOperations failure")
+	}
+
 	if eventNodeHeader.Population != 0 {
 		t.Errorf("TestEventNodeOperations failure")
 	}

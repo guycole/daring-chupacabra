@@ -32,9 +32,9 @@ func (eventArray *EventArrayType) dumper() {
 	}
 }
 
-func (eventArray *EventArrayType) insertNode(action EventActionEnum, itemID string, turn int) {
+func (eventArray *EventArrayType) insertNode(action EventActionEnum, id string, token CatalogTokenEnum, turn int) {
 	ndx := turn % maxEventNodeHeader
-	eventArray[ndx].insertNode(action, itemID)
+	eventArray[ndx].insertNode(action, id, token)
 }
 
 func (eventArray *EventArrayType) selectNextNode(turn int) (*EventNodeType, error) {

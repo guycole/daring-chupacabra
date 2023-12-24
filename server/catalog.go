@@ -38,17 +38,17 @@ type StateMapInterface interface {
 }
 */
 
-func (catalogMap *CatalogMapType) deleteItem(itemID string) {
-	delete(*catalogMap, itemID)
+func (catalogMap *CatalogMapType) deleteItem(id string) {
+	delete(*catalogMap, id)
 }
 
-func (catalogMap *CatalogMapType) insertItem(itemID string, location *LocationType, token CatalogTokenEnum) {
-	catalogItem := CatalogItemType{ItemID: itemID, Location: location, Token: token}
-	(*catalogMap)[itemID] = &catalogItem
+func (catalogMap *CatalogMapType) insertItem(id string, location *LocationType, token CatalogTokenEnum) {
+	catalogItem := CatalogItemType{ItemID: id, Location: location, Token: token}
+	(*catalogMap)[id] = &catalogItem
 }
 
-func (catalogMap *CatalogMapType) selectItem(itemID string) (*CatalogItemType, error) {
-	result, ok := (*catalogMap)[itemID]
+func (catalogMap *CatalogMapType) selectItem(id string) (*CatalogItemType, error) {
+	result, ok := (*catalogMap)[id]
 	if !ok {
 		return nil, errors.New("not found in catalog")
 	}

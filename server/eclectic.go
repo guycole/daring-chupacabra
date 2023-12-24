@@ -3,8 +3,62 @@
 
 package main
 
-func (at *AppType) scheduleEvent(action EventActionEnum, itemID string, turn int) {
-	at.EventArray.insertNode(action, itemID, turn)
+func (at *AppType) houseKeepingObj1(ent *EventNodeType) {
+	at.SugarLog.Infof("houseKeepingObj1:%s", ent.ItemID)
+}
+
+func (at *AppType) serviceObj1(ent *EventNodeType) {
+	switch ent.Action {
+	case nothingAction:
+		at.SugarLog.Debug("obj1Token/nothingAction")
+	case createAction:
+		at.SugarLog.Debug("obj1Token/createAction")
+
+		location := randomLocation(maxCellArraySideY, maxCellArraySideX)
+		at.Obj1StateMap.insertItem(ent.ItemID, location)
+
+		at.CellArray.updateCell(ent.ItemID, location, obj1Token)
+		at.scheduleEvent(houseKeepingAction, ent.ItemID, obj1Token, at.TurnCounter+1)
+	case deleteAction:
+		at.SugarLog.Debug("obj1Token/deleteAction")
+	case houseKeepingAction:
+		at.SugarLog.Debug("obj1Token/housekeepingAction")
+		at.houseKeepingObj1(ent)
+		at.scheduleEvent(houseKeepingAction, ent.ItemID, obj1Token, at.TurnCounter+1)
+	case moveAction:
+		at.SugarLog.Debug("obj1Token/moveAction")
+	default:
+		at.SugarLog.Fatal("uknown action")
+	}
+}
+
+func (at *AppType) serviceObj2(ent *EventNodeType) {
+	switch ent.Action {
+	case nothingAction:
+		at.SugarLog.Debug("obj2Token/nothingAction")
+	case createAction:
+		at.SugarLog.Debug("obj2Token/createAction")
+
+		//location := randomLocation(maxCellArraySideY, maxCellArraySideX)
+		//at.Obj2StateMap.insertItem(ent.ItemID, location)
+
+		//at.CellArray.updateCell(ent.ItemID, location, obj1Token)
+		at.scheduleEvent(houseKeepingAction, ent.ItemID, obj2Token, at.TurnCounter+1)
+	case deleteAction:
+		at.SugarLog.Debug("obj2Token/deleteAction")
+	case houseKeepingAction:
+		at.SugarLog.Debug("obj2Token/housekeepingAction")
+		at.houseKeepingObj1(ent)
+		at.scheduleEvent(houseKeepingAction, ent.ItemID, obj2Token, at.TurnCounter+1)
+	case moveAction:
+		at.SugarLog.Debug("obj2Token/moveAction")
+	default:
+		at.SugarLog.Fatal("uknown action")
+	}
+}
+
+func (at *AppType) scheduleEvent(action EventActionEnum, id string, token CatalogTokenEnum, turn int) {
+	at.EventArray.insertNode(action, id, token, turn)
 }
 
 func (at *AppType) eclecticManager() {
@@ -17,18 +71,17 @@ func (at *AppType) eclecticManager() {
 			runFlag = false
 		} else {
 			at.SugarLog.Infof("event:%v", ent)
+
+			switch ent.CatalogToken {
+			case vacantToken:
+				at.SugarLog.Infof("vacant token")
+			case obj1Token:
+				at.serviceObj1(ent)
+			case obj2Token:
+				at.serviceObj2(ent)
+			default:
+				at.SugarLog.Fatal("uknown token")
+			}
 		}
 	}
-}
-
-func (at *AppType) seed() {
-	target := "a6b1baf8-4eae-4d7a-ad8f-e31b8c7bf12e"
-
-	location := LocationType{YY: 4, XX: 4}
-
-	at.CatalogMap.insertItem(target, &location, obj1Token)
-	at.Obj1StateMap.insertItem(target, &location)
-	at.CellArray.updateCell(target, &location, obj1Token)
-
-	at.scheduleEvent(createAction, target, at.TurnCounter+1)
 }

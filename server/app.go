@@ -64,13 +64,13 @@ func (at *AppType) initialize(configurationFilename string) {
 
 	at.RunFlag = true
 	at.TurnCounter = 0
+
+	at.genesis()
 }
 
 // Run pacifier
 func (at *AppType) run() {
 	at.SugarLog.Info("run run run")
-
-	at.seed()
 
 	go at.timeKeeper()
 	time.Sleep(10 * time.Second)

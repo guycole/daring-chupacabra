@@ -17,17 +17,17 @@ func initializeObj2Map() *Obj2MapType {
 	return &result
 }
 
-func (obj2Map *Obj2MapType) deleteItem(itemID string) {
-	delete(*obj2Map, itemID)
+func (obj2Map *Obj2MapType) deleteItem(id string) {
+	delete(*obj2Map, id)
 }
 
-func (obj2Map *Obj2MapType) insertItem(itemID string, location LocationType) {
-	catalogItem := Obj2ItemType{ItemID: itemID, Location: location}
-	(*obj2Map)[itemID] = &catalogItem
+func (obj2Map *Obj2MapType) insertItem(id string, location LocationType) {
+	catalogItem := Obj2ItemType{ItemID: id, Location: location}
+	(*obj2Map)[id] = &catalogItem
 }
 
-func (obj2Map *Obj2MapType) selectItem(itemID string) (*Obj2ItemType, error) {
-	result, ok := (*obj2Map)[itemID]
+func (obj2Map *Obj2MapType) selectItem(id string) (*Obj2ItemType, error) {
+	result, ok := (*obj2Map)[id]
 	if !ok {
 		return nil, errors.New("not found in catalog")
 	}
