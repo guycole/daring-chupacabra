@@ -15,6 +15,14 @@ type LocationType struct {
 	YY int // row
 }
 
+func compareLocation(loc1, loc2 *LocationType) bool {
+	if loc1.XX == loc2.XX && loc1.YY == loc2.YY {
+		return true
+	}
+
+	return false
+}
+
 func newLocation(y, x int) *LocationType {
 	result := LocationType{YY: y, XX: x}
 	return &result

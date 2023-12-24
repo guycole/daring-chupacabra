@@ -10,14 +10,14 @@ import (
 const maxCellArraySideX = 50
 const maxCellArraySideY = 50
 
-type CellArrayType [maxCellArraySideX][maxCellArraySideY]*CellTokenType
+type CellArrayType [maxCellArraySideX][maxCellArraySideY]*CellType
 
 func initializeCellArray() *CellArrayType {
 	cellArray := new(CellArrayType)
 
 	for yy := 0; yy < maxCellArraySideY; yy++ {
 		for xx := 0; xx < maxCellArraySideX; xx++ {
-			cellArray[yy][xx] = &CellTokenType{ItemID: "", OccupiedBy: vacantToken}
+			cellArray[yy][xx] = &CellType{ItemID: "", OccupiedBy: vacantToken}
 		}
 	}
 

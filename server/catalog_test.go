@@ -44,6 +44,7 @@ func TestCatalogMapOperations(t *testing.T) {
 		t.Errorf("TestCatalogMapOperations failure")
 	}
 
+	// select test
 	for _, ndx := range tests {
 		catalogItem, err := catalogMap.selectItem(ndx.candidate)
 		if err != nil {
@@ -52,16 +53,27 @@ func TestCatalogMapOperations(t *testing.T) {
 		if catalogItem.ItemID != ndx.candidate {
 			t.Errorf("TestCatalogMapOperations failure")
 		}
-		if catalogItem.Token != ndx.token {
+		if catalogItem.TokenType != ndx.token {
 			t.Errorf("TestCatalogMapOperations failure")
 		}
 	}
 
-	for _, ndx := range tests {
-		catalogMap.deleteItem(ndx.candidate)
-	}
+	// update test
+	location := LocationType{YY: 13, XX: 13}
 
-	if len(*catalogMap) != 0 {
-		t.Errorf("TestCatalogMapOperations failure")
+	for _, ndx := range tests {
+		catalogMap.updateItemLifeCycle(ndx.candidate, deleted)
+		catalogMap.updateItemLocation(ndx.candidate, &location)
+
+		catalogItem, err := catalogMap.selectItem(ndx.candidate)
+		if err != nil {
+			t.Errorf("TestCatalogMapOperations failure")
+		}
+		if catalogItem.LifeCycle != deleted {
+			t.Errorf("TestCatalogMapOperations failure")
+		}
+		if compareLocation(catalogItem.Location, &location) != true {
+			t.Errorf("TestCatalogMapOperations failure")
+		}
 	}
 }

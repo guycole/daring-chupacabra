@@ -13,19 +13,19 @@ const (
 	nothingAction EventActionEnum = iota
 	createAction
 	deleteAction
-	houseKeepingAction
 	moveAction
+	nominalAction
 )
 
 func (eae EventActionEnum) String() string {
-	return [...]string{"nothing", "create", "delete", "housekeeping", "move"}[eae]
+	return [...]string{"nothing", "create", "delete", "move", "nominal"}[eae]
 }
 
 type EventNodeType struct {
-	Action       EventActionEnum
-	CatalogToken CatalogTokenEnum
-	ItemID       string
-	Next         *EventNodeType
+	Action    EventActionEnum
+	ItemID    string
+	TokenType CatalogTokenEnum
+	Next      *EventNodeType
 }
 
 type EventNodeHeaderType struct {
@@ -34,7 +34,7 @@ type EventNodeHeaderType struct {
 }
 
 func (eventNodeHeader *EventNodeHeaderType) insertNode(action EventActionEnum, id string, token CatalogTokenEnum) {
-	candidate := EventNodeType{Action: action, CatalogToken: token, ItemID: id, Next: nil}
+	candidate := EventNodeType{Action: action, ItemID: id, TokenType: token, Next: nil}
 
 	if eventNodeHeader.Population == 0 {
 		eventNodeHeader.Next = &candidate

@@ -14,8 +14,11 @@
 
 ## Data Structure
 1. State
-    1. Existence: all simulation objects hava a [CatalogItemType](https://github.com/guycole/daring-chupacabra/blob/main/server/catalog.go) within the [CatalogMap](https://github.com/guycole/daring-chupacabra/blob/main/server/catalog.go).  
-    1. Life Cycle: objects are created, exist and optionally deleted.  
-  1. Location: 
+    1. Simulation objects are represented by tokens which have a unique ID, a specialization (type) and a life cycle state.
+    1. Existence: all tokens hava a [CatalogItemType](https://github.com/guycole/daring-chupacabra/blob/main/server/catalog.go) within the [CatalogMap](https://github.com/guycole/daring-chupacabra/blob/main/server/catalog.go).  
+    1. Life Cycle: objects are scheduled, created and optionally deleted.  All tokens remain resident within CatalogMap during the simulation.  
+    1. Location: tokens can reside anywhere on a 2D grid of cells.  [LocationType](https://github.com/guycole/daring-chupacabra/blob/main/server/location.go) represents position within the 2D grid [CellArrayType](https://github.com/guycole/daring-chupacabra/blob/main/server/cell_array.go).  Only one token can occupy a [CellType](https://github.com/guycole/daring-chupacabra/blob/main/server/cell.go).  
 1. Clock (Time)
+    Time always moves forward.  Events can be scheduled up to 99 turns in advance (mod 100).  Events are kept within [event_array](https://github.com/guycole/daring-chupacabra/blob/main/server/event_array.go) which manages a list of [event_node](https://github.com/guycole/daring-chupacabra/blob/main/server/event_node.go).  Each event_node item represents a scheduled event process.
 1. Events
+    Each scheduled event has at least one token and an action verb.  Tokens can interract.
