@@ -14,8 +14,8 @@
 
 ## Data Structure
 1. State
-  1. Existence: all simulation objects hava a [CatalogItemType](https://github.com/guycole/daring-chupacabra/blob/main/server/catalog.go) within the [CatalogMap](https://github.com/guycole/daring-chupacabra/blob/main/server/catalog.go).  
-  1. Life Cycle: objects are created, exist and optionally deleted.  
+    1. Existence: all simulation objects hava a [CatalogItemType](https://github.com/guycole/daring-chupacabra/blob/main/server/catalog.go) within the [CatalogMap](https://github.com/guycole/daring-chupacabra/blob/main/server/catalog.go).  
+    1. Life Cycle: objects are created, exist and optionally deleted.  
   1. Location: 
 1. Clock (Time)
 1. Events
