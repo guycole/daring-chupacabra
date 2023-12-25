@@ -7,17 +7,17 @@ import (
 	"errors"
 )
 
-const maxCellArraySideX = 75
-const maxCellArraySideY = 75
+const maxCellArraySideX = 50
+const maxCellArraySideY = 50
 
-type CellArrayType [maxCellArraySideX][maxCellArraySideY]*CellTokenType
+type CellArrayType [maxCellArraySideX][maxCellArraySideY]*CellType
 
 func initializeCellArray() *CellArrayType {
 	cellArray := new(CellArrayType)
 
 	for yy := 0; yy < maxCellArraySideY; yy++ {
 		for xx := 0; xx < maxCellArraySideX; xx++ {
-			cellArray[yy][xx] = &CellTokenType{ItemID: "", OccupiedBy: vacantToken}
+			cellArray[yy][xx] = &CellType{ItemID: "", TokenType: vacantToken}
 		}
 	}
 
@@ -29,10 +29,17 @@ func (cat *CellArrayType) clearCell(location *LocationType) error {
 		return errors.New("bad cell location")
 	}
 
-	target := cat[location.YY][location.XX]
-	target.clearToken()
+	cat[location.YY][location.XX].clearToken()
 
 	return nil
+}
+
+func (cat *CellArrayType) isVacant(location *LocationType) bool {
+	if !location.legalLocation(maxCellArraySideY, maxCellArraySideX) {
+		return false
+	}
+
+	return cat[location.YY][location.XX].isVacant()
 }
 
 func (cat *CellArrayType) moveCell(source, destination *LocationType) error {
@@ -50,21 +57,21 @@ func (cat *CellArrayType) moveCell(source, destination *LocationType) error {
 		return errors.New("source cell is vacant")
 	}
 
-	destinationCell.updateToken(sourceCell.ItemID, sourceCell.OccupiedBy)
+	destinationCell.updateToken(sourceCell.ItemID, sourceCell.TokenType)
 	sourceCell.clearToken()
 
 	return nil
 }
 
-func (cat *CellArrayType) updateCell(location *LocationType, itemID string, occupiedBy CellTokenEnum) error {
+func (cat *CellArrayType) updateCell(id string, location *LocationType, tokenType CatalogTokenEnum) error {
 	if !location.legalLocation(maxCellArraySideY, maxCellArraySideX) {
 		return errors.New("bad cell location")
 	}
 
 	target := cat[location.YY][location.XX]
 
-	target.ItemID = itemID
-	target.OccupiedBy = occupiedBy
+	target.ItemID = id
+	target.TokenType = tokenType
 
 	return nil
 }

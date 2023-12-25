@@ -30,6 +30,8 @@ func main() {
 	app := AppType{SugarLog: zapSetup(false)}
 	app.SugarLog.Info(banner)
 
+	// configure from environment variables
+
 	envVars := [...]string{"CONFIGURATION_FILENAME", "FEATURE_FLAGS", "GRPC_PORT"}
 
 	for index, element := range envVars {

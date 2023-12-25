@@ -7,9 +7,31 @@ import (
 	"errors"
 )
 
+type MoveArgType struct {
+	XX int // column
+	YY int // row
+}
+
+type EventActionEnum int
+
+const (
+	nothingAction EventActionEnum = iota
+	createAction
+	deleteAction
+	moveAction
+	nominalAction
+)
+
+func (eae EventActionEnum) String() string {
+	return [...]string{"nothing", "create", "delete", "move", "nominal"}[eae]
+}
+
 type EventNodeType struct {
-	ItemID string
-	Next   *EventNodeType
+	Action    EventActionEnum
+	ItemID    string
+	MoveArgs  *MoveArgType
+	TokenType CatalogTokenEnum
+	Next      *EventNodeType
 }
 
 type EventNodeHeaderType struct {
@@ -17,14 +39,18 @@ type EventNodeHeaderType struct {
 	Next       *EventNodeType
 }
 
-func (eventNodeHeader *EventNodeHeaderType) insertNode(itemID string) {
-	candidate := EventNodeType{ItemID: itemID, Next: nil}
+func newEventNode(action EventActionEnum, id string, token CatalogTokenEnum) *EventNodeType {
+	return &EventNodeType{Action: action, ItemID: id, TokenType: token}
+}
+
+func (eventNodeHeader *EventNodeHeaderType) insertNode(candidate *EventNodeType) {
+	candidate.Next = nil
 
 	if eventNodeHeader.Population == 0 {
-		eventNodeHeader.Next = &candidate
+		eventNodeHeader.Next = candidate
 	} else {
 		candidate.Next = eventNodeHeader.Next
-		eventNodeHeader.Next = &candidate
+		eventNodeHeader.Next = candidate
 	}
 
 	eventNodeHeader.Population++
@@ -45,7 +71,7 @@ func (eventNodeHeader *EventNodeHeaderType) selectNextNode() (*EventNodeType, er
 	}
 
 	eventNodeHeader.Population--
-	result.Next = nil
+	result.Next = nil // prevent leak of next node
 
 	return result, nil
 }

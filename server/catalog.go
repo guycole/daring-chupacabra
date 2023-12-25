@@ -5,8 +5,35 @@ package main
 
 import "errors"
 
+type CatalogTokenEnum int
+
+const (
+	vacantToken CatalogTokenEnum = iota
+	obj1Token
+	obj2Token
+)
+
+func (cte CatalogTokenEnum) String() string {
+	return [...]string{"vacant", "obj1", "obj2"}[cte]
+}
+
+type LifeCycleEnum int
+
+const (
+	scheduled LifeCycleEnum = iota
+	created
+	deleted
+)
+
+func (lce LifeCycleEnum) String() string {
+	return [...]string{"created", "deleted"}[lce]
+}
+
 type CatalogItemType struct {
-	ItemID string
+	ItemID    string
+	LifeCycle LifeCycleEnum
+	Location  *LocationType
+	TokenType CatalogTokenEnum
 }
 
 type CatalogMapType map[string]*CatalogItemType
@@ -16,20 +43,34 @@ func initializeCatalogMap() *CatalogMapType {
 	return &catalogMap
 }
 
-func (catalogMap *CatalogMapType) deleteItem(itemID string) {
-	delete(*catalogMap, itemID)
+func (catalogMap *CatalogMapType) insertItem(id string, location *LocationType, token CatalogTokenEnum) {
+	catalogItem := CatalogItemType{ItemID: id, LifeCycle: created, Location: location, TokenType: token}
+	(*catalogMap)[id] = &catalogItem
 }
 
-func (catalogMap *CatalogMapType) insertItem(itemID string) {
-	catalogItem := CatalogItemType{ItemID: itemID}
-	(*catalogMap)[itemID] = &catalogItem
-}
-
-func (catalogMap *CatalogMapType) selectItem(itemID string) (*CatalogItemType, error) {
-	result, ok := (*catalogMap)[itemID]
+func (catalogMap *CatalogMapType) selectItem(id string) (*CatalogItemType, error) {
+	result, ok := (*catalogMap)[id]
 	if !ok {
 		return nil, errors.New("not found in catalog")
 	}
 
 	return result, nil
+}
+
+func (catalogMap *CatalogMapType) updateItemLifeCycle(id string, lifeCycle LifeCycleEnum) {
+	catalogItem, err := catalogMap.selectItem(id)
+	if err != nil {
+		return
+	}
+
+	catalogItem.LifeCycle = lifeCycle
+}
+
+func (catalogMap *CatalogMapType) updateItemLocation(id string, location *LocationType) {
+	catalogItem, err := catalogMap.selectItem(id)
+	if err != nil {
+		return
+	}
+
+	catalogItem.Location = location
 }

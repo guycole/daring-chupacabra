@@ -6,6 +6,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"reflect"
 	"time"
 
 	"go.uber.org/zap"
@@ -16,48 +17,36 @@ import (
 )
 
 type AppType struct {
-	FeatureFlags  uint32
-	Configuration *ConfigurationType
-	GrpcPort      int
-	SugarLog      *zap.SugaredLogger
+	FeatureFlags  uint32             // control run time features
+	Configuration *ConfigurationType // configuration parameters
+	GrpcPort      int                // gRPC port
+	SugarLog      *zap.SugaredLogger // logging
 
-	TurnCounter int
-	CellArray   *CellArrayType
-	EventArray  *EventArrayType
-	CatalogMap  *CatalogMapType
-}
+	Quantum     time.Time
+	RunFlag     bool // true while scheduler runs
+	TurnCounter int  // current turn
 
-func (at *AppType) runaturn() time.Duration {
-	at.SugarLog.Infof("turn:%d", at.TurnCounter)
-
-	startTime := time.Now()
-	at.SugarLog.Debugf("start:%v", startTime)
-
-	//	discoverCandidates()
-
-	stopTime := time.Now()
-	at.SugarLog.Debugf("stop:%v", stopTime)
-
-	deltaTime := stopTime.Sub(startTime)
-
-	return deltaTime
+	CellArray    *CellArrayType  // 2D game board
+	EventArray   *EventArrayType // scheduled events
+	CatalogMap   *CatalogMapType // catalog of all items
+	Obj1StateMap *Obj1MapType    // state of all obj1 items
+	Obj2StateMap *Obj2MapType    // state of all obj2 items
 }
 
 func (at *AppType) timeKeeper() {
-	go func() {
-		for {
-			duration := at.runaturn()
-			at.SugarLog.Debugf("duration:%v", duration)
-			time.Sleep(1 * time.Second)
-			at.TurnCounter++
+	for at.RunFlag {
+		startTime := time.Now()
+		fmt.Println(reflect.TypeOf(startTime))
 
-			if at.TurnCounter > 10 {
-				break
-			}
-		}
-	}()
+		at.TurnCounter++
+		at.eclecticManager()
 
-	at.SugarLog.Infof("timeKeeper exit")
+		stopTime := time.Now()
+		deltaTime := stopTime.Sub(startTime)
+		at.SugarLog.Debugf("duration:%v", deltaTime)
+
+		time.Sleep(1 * time.Second)
+	}
 }
 
 func (at *AppType) initialize(configurationFilename string) {
@@ -73,13 +62,22 @@ func (at *AppType) initialize(configurationFilename string) {
 	at.CatalogMap = initializeCatalogMap()
 	at.CellArray = initializeCellArray()
 	at.EventArray = initializeEventArray()
+	at.Obj1StateMap = initializeObj1Map()
+	at.Obj2StateMap = initializeObj2Map()
+
+	at.RunFlag = true
+	at.TurnCounter = 0
+
+	at.genesis()
 }
 
 // Run pacifier
 func (at *AppType) run() {
 	at.SugarLog.Info("run run run")
 
-	//at.timeKeeper()
+	go at.timeKeeper()
+	time.Sleep(10 * time.Second)
+	at.RunFlag = false
 
 	//at.SugarLog.Fatal(http.ListenAndServe(":"+address, at.Router))
 

@@ -14,8 +14,13 @@ import (
 
 type ConfigurationType struct {
 	ConfigurationFilename string
-	ClockStart            int `yaml:"clockStart"`
-	ClockStop             int `yaml:"clockStop"`
+
+	CellArraySideX int `yaml:"cellArraySideX"`
+	CellArraySideY int `yaml:"cellArraySideY"`
+
+	TurnDuration int `yaml:"turnDuration"`
+	TurnStart    int `yaml:"turnStart"`
+	TurnStop     int `yaml:"turnStop"`
 }
 
 type Car struct {
