@@ -17,18 +17,20 @@ import (
 )
 
 type AppType struct {
-	FeatureFlags  uint32
-	Configuration *ConfigurationType
-	GrpcPort      int
-	SugarLog      *zap.SugaredLogger
+	FeatureFlags  uint32             // control run time features
+	Configuration *ConfigurationType // configuration parameters
+	GrpcPort      int                // gRPC port
+	SugarLog      *zap.SugaredLogger // logging
 
-	Quantum      time.Time
-	RunFlag      bool
-	TurnCounter  int
-	CellArray    *CellArrayType
-	EventArray   *EventArrayType
-	CatalogMap   *CatalogMapType
-	Obj1StateMap *Obj1MapType
+	Quantum     time.Time
+	RunFlag     bool // true while scheduler runs
+	TurnCounter int  // current turn
+
+	CellArray    *CellArrayType  // 2D game board
+	EventArray   *EventArrayType // scheduled events
+	CatalogMap   *CatalogMapType // catalog of all items
+	Obj1StateMap *Obj1MapType    // state of all obj1 items
+	Obj2StateMap *Obj2MapType    // state of all obj2 items
 }
 
 func (at *AppType) timeKeeper() {
@@ -61,6 +63,7 @@ func (at *AppType) initialize(configurationFilename string) {
 	at.CellArray = initializeCellArray()
 	at.EventArray = initializeEventArray()
 	at.Obj1StateMap = initializeObj1Map()
+	at.Obj2StateMap = initializeObj2Map()
 
 	at.RunFlag = true
 	at.TurnCounter = 0

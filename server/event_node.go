@@ -7,6 +7,11 @@ import (
 	"errors"
 )
 
+type MoveArgType struct {
+	XX int // column
+	YY int // row
+}
+
 type EventActionEnum int
 
 const (
@@ -24,6 +29,7 @@ func (eae EventActionEnum) String() string {
 type EventNodeType struct {
 	Action    EventActionEnum
 	ItemID    string
+	MoveArgs  *MoveArgType
 	TokenType CatalogTokenEnum
 	Next      *EventNodeType
 }
@@ -33,14 +39,18 @@ type EventNodeHeaderType struct {
 	Next       *EventNodeType
 }
 
-func (eventNodeHeader *EventNodeHeaderType) insertNode(action EventActionEnum, id string, token CatalogTokenEnum) {
-	candidate := EventNodeType{Action: action, ItemID: id, TokenType: token, Next: nil}
+func newEventNode(action EventActionEnum, id string, token CatalogTokenEnum) *EventNodeType {
+	return &EventNodeType{Action: action, ItemID: id, TokenType: token}
+}
+
+func (eventNodeHeader *EventNodeHeaderType) insertNode(candidate *EventNodeType) {
+	candidate.Next = nil
 
 	if eventNodeHeader.Population == 0 {
-		eventNodeHeader.Next = &candidate
+		eventNodeHeader.Next = candidate
 	} else {
 		candidate.Next = eventNodeHeader.Next
-		eventNodeHeader.Next = &candidate
+		eventNodeHeader.Next = candidate
 	}
 
 	eventNodeHeader.Population++
@@ -61,7 +71,7 @@ func (eventNodeHeader *EventNodeHeaderType) selectNextNode() (*EventNodeType, er
 	}
 
 	eventNodeHeader.Population--
-	result.Next = nil
+	result.Next = nil // prevent leak of next node
 
 	return result, nil
 }

@@ -15,7 +15,7 @@ type LocationType struct {
 	YY int // row
 }
 
-func compareLocation(loc1, loc2 *LocationType) bool {
+func sameLocation(loc1, loc2 *LocationType) bool {
 	if loc1.XX == loc2.XX && loc1.YY == loc2.YY {
 		return true
 	}

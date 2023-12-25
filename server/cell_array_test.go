@@ -20,29 +20,25 @@ func TestCellArray(t *testing.T) {
 	}
 
 	for _, ndx := range tests {
+		// create cell and test
 		location1 := &LocationType{YY: ndx.yy, XX: ndx.xx}
 		cellArray.updateCell(ndx.candidate, location1, ndx.occupiedBy)
 
-		cellTokenType1 := cellArray[ndx.yy][ndx.xx]
-		if cellTokenType1.ItemID != ndx.candidate {
-			t.Errorf("TestCellToken failure")
-		}
-		if cellTokenType1.OccupiedBy != ndx.occupiedBy {
+		cell1 := cellArray[ndx.yy][ndx.xx]
+		if cell1.ItemID != ndx.candidate || cell1.TokenType != ndx.occupiedBy {
 			t.Errorf("TestCellToken failure")
 		}
 
+		// update cell and test
 		location2 := &LocationType{YY: ndx.yy + 2, XX: ndx.xx + 3}
 		cellArray.moveCell(location1, location2)
 
-		if !cellTokenType1.isVacant() {
+		if !cell1.isVacant() {
 			t.Errorf("TestCellToken failure")
 		}
 
-		cellTokenType2 := cellArray[ndx.yy+2][ndx.xx+3]
-		if cellTokenType2.ItemID != ndx.candidate {
-			t.Errorf("TestCellToken failure")
-		}
-		if cellTokenType2.OccupiedBy != ndx.occupiedBy {
+		cell2 := cellArray[ndx.yy+2][ndx.xx+3]
+		if cell2.ItemID != ndx.candidate || cell2.TokenType != ndx.occupiedBy {
 			t.Errorf("TestCellToken failure")
 		}
 	}

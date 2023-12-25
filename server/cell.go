@@ -4,20 +4,20 @@
 package main
 
 type CellType struct {
-	ItemID     string // same as catalog item ID
-	OccupiedBy CatalogTokenEnum
+	ItemID    string // same as catalog item ID
+	TokenType CatalogTokenEnum
 }
 
 func (ctt *CellType) clearToken() {
 	ctt.ItemID = ""
-	ctt.OccupiedBy = vacantToken
+	ctt.TokenType = vacantToken
 }
 
 func (ctt *CellType) isVacant() bool {
-	return ctt.OccupiedBy == vacantToken
+	return ctt.TokenType == vacantToken
 }
 
-func (ctt *CellType) updateToken(id string, occupiedBy CatalogTokenEnum) {
+func (ctt *CellType) updateToken(id string, tokenType CatalogTokenEnum) {
 	ctt.ItemID = id
-	ctt.OccupiedBy = occupiedBy
+	ctt.TokenType = tokenType
 }

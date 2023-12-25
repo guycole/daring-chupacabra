@@ -15,8 +15,7 @@ func initializeEventArray() *EventArrayType {
 	eventArray := new(EventArrayType)
 
 	for ii := 0; ii < maxEventNodeHeader; ii++ {
-		candidate := EventNodeHeaderType{Population: 0, Next: nil}
-		eventArray[ii] = &candidate
+		eventArray[ii] = &EventNodeHeaderType{Population: 0, Next: nil}
 	}
 
 	return eventArray
@@ -32,13 +31,11 @@ func (eventArray *EventArrayType) dumper() {
 	}
 }
 
-func (eventArray *EventArrayType) insertNode(action EventActionEnum, id string, token CatalogTokenEnum, turn int) {
-	ndx := turn % maxEventNodeHeader
-	eventArray[ndx].insertNode(action, id, token)
+func (eventArray *EventArrayType) insertNode(candidate *EventNodeType, turn int) {
+	eventArray[turn%maxEventNodeHeader].insertNode(candidate)
 }
 
 func (eventArray *EventArrayType) selectNextNode(turn int) (*EventNodeType, error) {
-	ndx := turn % maxEventNodeHeader
-	result, err := eventArray[ndx].selectNextNode()
+	result, err := eventArray[turn%maxEventNodeHeader].selectNextNode()
 	return result, err
 }

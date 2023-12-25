@@ -26,7 +26,7 @@ const (
 )
 
 func (lce LifeCycleEnum) String() string {
-	return [...]string{"scheduled", "created", "deleted"}[lce]
+	return [...]string{"created", "deleted"}[lce]
 }
 
 type CatalogItemType struct {
@@ -44,7 +44,7 @@ func initializeCatalogMap() *CatalogMapType {
 }
 
 func (catalogMap *CatalogMapType) insertItem(id string, location *LocationType, token CatalogTokenEnum) {
-	catalogItem := CatalogItemType{ItemID: id, LifeCycle: scheduled, Location: location, TokenType: token}
+	catalogItem := CatalogItemType{ItemID: id, LifeCycle: created, Location: location, TokenType: token}
 	(*catalogMap)[id] = &catalogItem
 }
 

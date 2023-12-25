@@ -3,7 +3,9 @@
 
 package main
 
-import "errors"
+import (
+	"errors"
+)
 
 type Obj1ItemType struct {
 	ItemID   string
@@ -35,23 +37,38 @@ func (obj1Map *Obj1MapType) selectItem(id string) (*Obj1ItemType, error) {
 	return result, nil
 }
 
-/*
-func (obj1Map *Obj1MapType) updateItem(action EventActionEnum, itemID string) error {
-	switch action {
+func (at *AppType) serviceObj1(ent *EventNodeType) {
+	switch ent.Action {
+	case nothingAction:
+		at.SugarLog.Debug("obj1Token/nothingAction")
 	case createAction:
-		// fresh item
-		at.SugarLog.Infof("create obj1:%s", itemID)
+		at.SugarLog.Debug("obj1Token/createAction")
+
+		var location *LocationType
+		for flag := true; flag; flag = !at.CellArray.isVacant(location) {
+			location = randomLocation(maxCellArraySideY, maxCellArraySideX)
+		}
+
+		at.CellArray.updateCell(ent.ItemID, location, obj1Token)
+		at.CatalogMap.insertItem(ent.ItemID, location, obj1Token)
+		at.Obj1StateMap.insertItem(ent.ItemID, location)
+
+		at.scheduleNominalAction(ent.ItemID, obj1Token, at.TurnCounter+1)
 	case deleteAction:
-		// delete item
-		at.SugarLog.Infof("delete obj1:%s", itemID)
-	case houseKeepingAction:
-		// house keeping
-		at.SugarLog.Infof("housekeeping obj1:%s", itemID)
+		at.SugarLog.Debug("obj1Token/deleteAction")
+
+		target, err := at.Obj1StateMap.selectItem(ent.ItemID)
+		if err == nil {
+			at.CellArray.clearCell(target.Location)
+			at.Obj1StateMap.deleteItem(ent.ItemID)
+			at.CatalogMap.updateItemLifeCycle(ent.ItemID, deleted)
+		}
 	case moveAction:
-		// move item
-		at.SugarLog.Infof("move obj1:%s", itemID)
+		at.SugarLog.Debug("obj1Token/moveAction")
+	case nominalAction:
+		at.SugarLog.Debug("obj1Token/nominalAction")
+		at.scheduleNominalAction(ent.ItemID, obj1Token, at.TurnCounter+1)
 	default:
-		return errors.New("unknown action")
+		at.SugarLog.Fatal("uknown action")
 	}
 }
-*/

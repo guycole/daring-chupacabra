@@ -11,7 +11,7 @@ func TestEventNodeHeader(t *testing.T) {
 	tests := []struct {
 		action    EventActionEnum
 		candidate string
-		token     CatalogTokenEnum
+		tokenType CatalogTokenEnum
 	}{
 		{nominalAction, "81837d8a-2925-4b52-ab4f-31177a6b2f83", obj1Token},
 		{moveAction, "4d0c6caa-5ad4-4505-b3d2-e951f5c838fc", obj2Token},
@@ -20,7 +20,7 @@ func TestEventNodeHeader(t *testing.T) {
 	eventNodeHeader := EventNodeHeaderType{Population: 0, Next: nil}
 
 	for _, ndx := range tests {
-		eventNodeHeader.insertNode(ndx.action, ndx.candidate, ndx.token)
+		eventNodeHeader.insertNode(newEventNode(ndx.action, ndx.candidate, ndx.tokenType))
 	}
 
 	if eventNodeHeader.Population != 2 {
@@ -31,13 +31,7 @@ func TestEventNodeHeader(t *testing.T) {
 	if err1 != nil {
 		t.Errorf("TestEventNodeOperations failure")
 	}
-	if temp1.Action != tests[1].action {
-		t.Errorf("TestEventNodeOperations failure")
-	}
-	if temp1.ItemID != tests[1].candidate {
-		t.Errorf("TestEventNodeOperations failure")
-	}
-	if temp1.TokenType != tests[1].token {
+	if temp1.Action != tests[1].action || temp1.ItemID != tests[1].candidate || temp1.TokenType != tests[1].tokenType {
 		t.Errorf("TestEventNodeOperations failure")
 	}
 
@@ -49,13 +43,7 @@ func TestEventNodeHeader(t *testing.T) {
 	if err2 != nil {
 		t.Errorf("TestEventNodeOperations failure")
 	}
-	if temp2.Action != tests[0].action {
-		t.Errorf("TestEventNodeOperations failure")
-	}
-	if temp2.ItemID != tests[0].candidate {
-		t.Errorf("TestEventNodeOperations failure")
-	}
-	if temp2.TokenType != tests[0].token {
+	if temp2.Action != tests[0].action || temp2.ItemID != tests[0].candidate || temp2.TokenType != tests[0].tokenType {
 		t.Errorf("TestEventNodeOperations failure")
 	}
 
@@ -63,10 +51,10 @@ func TestEventNodeHeader(t *testing.T) {
 		t.Errorf("TestEventNodeOperations failure")
 	}
 
-	_, err3 := eventNodeHeader.selectNextNode()
-	if err3 == nil {
+	if _, err3 := eventNodeHeader.selectNextNode(); err3 == nil {
 		t.Errorf("TestEventNodeOperations failure")
 	}
+
 	if eventNodeHeader.Population != 0 {
 		t.Errorf("TestEventNodeOperations failure")
 	}

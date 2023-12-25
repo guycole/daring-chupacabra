@@ -28,7 +28,7 @@ func TestCatalogMapOperations(t *testing.T) {
 
 	tests := []struct {
 		candidate string
-		token     CatalogTokenEnum
+		tokenType CatalogTokenEnum
 		yy, xx    int
 	}{
 		{"81837d8a-2925-4b52-ab4f-31177a6b2f83", obj1Token, 3, 5},
@@ -37,7 +37,7 @@ func TestCatalogMapOperations(t *testing.T) {
 
 	for _, ndx := range tests {
 		location := LocationType{YY: ndx.yy, XX: ndx.xx}
-		catalogMap.insertItem(ndx.candidate, &location, ndx.token)
+		catalogMap.insertItem(ndx.candidate, &location, ndx.tokenType)
 	}
 
 	if len(*catalogMap) != 2 {
@@ -53,7 +53,7 @@ func TestCatalogMapOperations(t *testing.T) {
 		if catalogItem.ItemID != ndx.candidate {
 			t.Errorf("TestCatalogMapOperations failure")
 		}
-		if catalogItem.TokenType != ndx.token {
+		if catalogItem.TokenType != ndx.tokenType {
 			t.Errorf("TestCatalogMapOperations failure")
 		}
 	}
@@ -72,7 +72,7 @@ func TestCatalogMapOperations(t *testing.T) {
 		if catalogItem.LifeCycle != deleted {
 			t.Errorf("TestCatalogMapOperations failure")
 		}
-		if compareLocation(catalogItem.Location, &location) != true {
+		if sameLocation(catalogItem.Location, &location) != true {
 			t.Errorf("TestCatalogMapOperations failure")
 		}
 	}

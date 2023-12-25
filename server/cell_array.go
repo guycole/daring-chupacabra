@@ -17,7 +17,7 @@ func initializeCellArray() *CellArrayType {
 
 	for yy := 0; yy < maxCellArraySideY; yy++ {
 		for xx := 0; xx < maxCellArraySideX; xx++ {
-			cellArray[yy][xx] = &CellType{ItemID: "", OccupiedBy: vacantToken}
+			cellArray[yy][xx] = &CellType{ItemID: "", TokenType: vacantToken}
 		}
 	}
 
@@ -29,10 +29,17 @@ func (cat *CellArrayType) clearCell(location *LocationType) error {
 		return errors.New("bad cell location")
 	}
 
-	target := cat[location.YY][location.XX]
-	target.clearToken()
+	cat[location.YY][location.XX].clearToken()
 
 	return nil
+}
+
+func (cat *CellArrayType) isVacant(location *LocationType) bool {
+	if !location.legalLocation(maxCellArraySideY, maxCellArraySideX) {
+		return false
+	}
+
+	return cat[location.YY][location.XX].isVacant()
 }
 
 func (cat *CellArrayType) moveCell(source, destination *LocationType) error {
@@ -50,13 +57,13 @@ func (cat *CellArrayType) moveCell(source, destination *LocationType) error {
 		return errors.New("source cell is vacant")
 	}
 
-	destinationCell.updateToken(sourceCell.ItemID, sourceCell.OccupiedBy)
+	destinationCell.updateToken(sourceCell.ItemID, sourceCell.TokenType)
 	sourceCell.clearToken()
 
 	return nil
 }
 
-func (cat *CellArrayType) updateCell(id string, location *LocationType, occupiedBy CatalogTokenEnum) error {
+func (cat *CellArrayType) updateCell(id string, location *LocationType, tokenType CatalogTokenEnum) error {
 	if !location.legalLocation(maxCellArraySideY, maxCellArraySideX) {
 		return errors.New("bad cell location")
 	}
@@ -64,7 +71,7 @@ func (cat *CellArrayType) updateCell(id string, location *LocationType, occupied
 	target := cat[location.YY][location.XX]
 
 	target.ItemID = id
-	target.OccupiedBy = occupiedBy
+	target.TokenType = tokenType
 
 	return nil
 }
