@@ -4,6 +4,7 @@
 package main
 
 func (at *AppType) scheduleCreateAction(id string, tokenType CatalogTokenEnum, turn int) {
+	// at.SugarLog.Infof("scheduler create id:%s tokenType:%s turn:%d", id, tokenType, turn)
 	candidate := newEventNode(createAction, id, tokenType)
 	at.EventArray.insertNode(candidate, turn)
 }
@@ -35,7 +36,7 @@ func (at *AppType) eclecticManager() {
 			// all events have been consumed
 			eventFlag = false
 		} else {
-			at.SugarLog.Infof("event:%v", ent)
+			at.SugarLog.Debugf("action:%s id:%s tokenType:%s turn:%d", ent.Action, ent.ItemID, ent.TokenType, at.TurnCounter)
 
 			switch ent.TokenType {
 			case vacantToken:

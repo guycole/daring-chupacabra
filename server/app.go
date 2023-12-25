@@ -6,7 +6,6 @@ package main
 import (
 	"fmt"
 	"net"
-	"reflect"
 	"time"
 
 	"go.uber.org/zap"
@@ -22,7 +21,7 @@ type AppType struct {
 	GrpcPort      int                // gRPC port
 	SugarLog      *zap.SugaredLogger // logging
 
-	Quantum     time.Time
+	Quantum     time.Duration
 	RunFlag     bool // true while scheduler runs
 	TurnCounter int  // current turn
 
@@ -34,9 +33,12 @@ type AppType struct {
 }
 
 func (at *AppType) timeKeeper() {
+	var sleepTime time.Duration
+
+	at.Quantum = 3 * time.Second
+
 	for at.RunFlag {
 		startTime := time.Now()
-		fmt.Println(reflect.TypeOf(startTime))
 
 		at.TurnCounter++
 		at.eclecticManager()
@@ -45,7 +47,15 @@ func (at *AppType) timeKeeper() {
 		deltaTime := stopTime.Sub(startTime)
 		at.SugarLog.Debugf("duration:%v", deltaTime)
 
-		time.Sleep(1 * time.Second)
+		if deltaTime > at.Quantum {
+			at.SugarLog.Warnf("overrun:%v", deltaTime)
+			sleepTime = 0
+		} else {
+			sleepTime = at.Quantum - deltaTime
+			at.SugarLog.Debugf("sleep:%v", sleepTime)
+		}
+
+		time.Sleep(sleepTime)
 	}
 }
 
@@ -68,7 +78,7 @@ func (at *AppType) initialize(configurationFilename string) {
 	at.RunFlag = true
 	at.TurnCounter = 0
 
-	at.genesis()
+	at.genesis(movingToken)
 }
 
 // Run pacifier
@@ -76,23 +86,24 @@ func (at *AppType) run() {
 	at.SugarLog.Info("run run run")
 
 	go at.timeKeeper()
-	time.Sleep(10 * time.Second)
-	at.RunFlag = false
 
 	//at.SugarLog.Fatal(http.ListenAndServe(":"+address, at.Router))
 
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", at.GrpcPort))
-	if err != nil {
-		at.SugarLog.Fatalf("failed to listen: %v", err)
+	if true {
+		time.Sleep(10 * time.Second)
+		at.RunFlag = false
+	} else {
+		listener, err := net.Listen("tcp", fmt.Sprintf(":%d", at.GrpcPort))
+		if err != nil {
+			at.SugarLog.Fatalf("failed to listen: %v", err)
+		}
+
+		grpcServer := grpc.NewServer()
+		pb.RegisterChupacabraServer(grpcServer, &ServerType{})
+		at.SugarLog.Infof("server listening at %v", listener.Addr())
+
+		if err := grpcServer.Serve(listener); err != nil {
+			at.SugarLog.Fatalf("failed to serve: %v", err)
+		}
 	}
-
-	grpcServer := grpc.NewServer()
-	pb.RegisterChupacabraServer(grpcServer, &ServerType{})
-	at.SugarLog.Infof("server listening at %v", listener.Addr())
-
-	//	if err := grpcServer.Serve(listener); err != nil {
-	//		at.SugarLog.Fatalf("failed to serve: %v", err)
-	//	}
-
-	//time.Sleep(22 * time.Second)
 }

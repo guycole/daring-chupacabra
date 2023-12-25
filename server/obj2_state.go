@@ -42,8 +42,6 @@ func (at *AppType) serviceObj2(ent *EventNodeType) {
 	case nothingAction:
 		at.SugarLog.Debug("obj2Token/nothingAction")
 	case createAction:
-		at.SugarLog.Debug("obj2Token/createAction")
-
 		var location *LocationType
 		for flag := true; flag; flag = !at.CellArray.isVacant(location) {
 			location = randomLocation(maxCellArraySideY, maxCellArraySideX)
@@ -52,8 +50,6 @@ func (at *AppType) serviceObj2(ent *EventNodeType) {
 		at.CellArray.updateCell(ent.ItemID, location, obj2Token)
 		at.CatalogMap.insertItem(ent.ItemID, location, obj2Token)
 		at.Obj2StateMap.insertItem(ent.ItemID, location)
-
-		at.scheduleMoveAction(ent.ItemID, obj2Token, at.TurnCounter+1, 3, 3)
 	case deleteAction:
 		at.SugarLog.Debug("obj2Token/deleteAction")
 
@@ -64,14 +60,12 @@ func (at *AppType) serviceObj2(ent *EventNodeType) {
 			at.CatalogMap.updateItemLifeCycle(ent.ItemID, deleted)
 		}
 	case moveAction:
-		at.SugarLog.Debug("obj2Token/moveAction")
-
 		target, err := at.Obj2StateMap.selectItem(ent.ItemID)
 		if err != nil {
 			at.SugarLog.Fatal("missing item in obj2StateMap")
 		}
 
-		at.SugarLog.Debug(target.Location)
+		at.SugarLog.Debugf("id:%s locationy:%d locationx:%d turn:%d", ent.ItemID, target.Location.YY, target.Location.XX, at.TurnCounter)
 
 		newLocation := &LocationType{YY: target.Location.YY + ent.MoveArgs.YY, XX: target.Location.XX + ent.MoveArgs.XX}
 		if !newLocation.legalLocation(maxCellArraySideY, maxCellArraySideX) {
@@ -84,10 +78,11 @@ func (at *AppType) serviceObj2(ent *EventNodeType) {
 		at.CellArray.moveCell(target.Location, newLocation)
 
 		target.Location = newLocation
-		//at.Obj2StateMap.updateItemLocation(ent.ItemID, newLocation)
+		at.SugarLog.Debugf("id:%s locationy:%d locationx:%d turn:%d", ent.ItemID, target.Location.YY, target.Location.XX, at.TurnCounter)
+
 		at.CatalogMap.updateItemLocation(ent.ItemID, newLocation)
 
-		at.scheduleMoveAction(ent.ItemID, obj2Token, at.TurnCounter+1, 3, 3)
+		//at.scheduleMoveAction(ent.ItemID, obj2Token, at.TurnCounter+1, 3, 3)
 	case nominalAction:
 		at.SugarLog.Debug("obj2Token/nominalAction")
 		at.scheduleNominalAction(ent.ItemID, obj2Token, at.TurnCounter+1)

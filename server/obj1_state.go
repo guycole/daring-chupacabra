@@ -42,8 +42,6 @@ func (at *AppType) serviceObj1(ent *EventNodeType) {
 	case nothingAction:
 		at.SugarLog.Debug("obj1Token/nothingAction")
 	case createAction:
-		at.SugarLog.Debug("obj1Token/createAction")
-
 		var location *LocationType
 		for flag := true; flag; flag = !at.CellArray.isVacant(location) {
 			location = randomLocation(maxCellArraySideY, maxCellArraySideX)
@@ -66,7 +64,6 @@ func (at *AppType) serviceObj1(ent *EventNodeType) {
 	case moveAction:
 		at.SugarLog.Debug("obj1Token/moveAction")
 	case nominalAction:
-		at.SugarLog.Debug("obj1Token/nominalAction")
 		at.scheduleNominalAction(ent.ItemID, obj1Token, at.TurnCounter+1)
 	default:
 		at.SugarLog.Fatal("uknown action")
