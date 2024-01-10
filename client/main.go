@@ -33,7 +33,7 @@ func writeCommand(cmd string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	rr, err := cc.EnqueueSubmit(ctx, &pb.EnqueueRequest{ExecuteTurn: 111, Message: "woot", Owner: "guy"})
+	rr, err := cc.EnqueueSubmit(ctx, &pb.EnqueueRequest{ExecuteTurn: -1, Message: "woot", Owner: "guy"})
 
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)

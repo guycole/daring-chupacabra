@@ -21,6 +21,8 @@ type ServerType struct {
 func (ss *ServerType) EnqueueSubmit(ctx context.Context, in *pb.EnqueueRequest) (*pb.EnqueueResponse, error) {
 	log.Printf("Received: %v", in)
 
+	//scheduleMoveaction("woot", obj2Token, 1, 1, 5)
+
 	/*
 		scheduleCreateAction()
 		scheduleMoveAction()
