@@ -10,11 +10,25 @@ import (
 	pb "github.com/guycole/daring-chupacabra/proto"
 )
 
+type CommandType struct {
+	ExecuteTurn int
+}
+
 type ServerType struct {
 	pb.UnimplementedChupacabraServer
 }
 
 func (ss *ServerType) EnqueueSubmit(ctx context.Context, in *pb.EnqueueRequest) (*pb.EnqueueResponse, error) {
 	log.Printf("Received: %v", in)
+
+	//scheduleMoveaction("woot", obj2Token, 1, 1, 5)
+
+	/*
+		scheduleCreateAction()
+		scheduleMoveAction()
+		scheduleNominalAction()
+		scheduleDeleteAction()
+	*/
+
 	return &pb.EnqueueResponse{RequestStatus: 11, Token: "woot"}, nil
 }

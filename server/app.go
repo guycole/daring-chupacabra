@@ -89,7 +89,7 @@ func (at *AppType) run() {
 
 	//at.SugarLog.Fatal(http.ListenAndServe(":"+address, at.Router))
 
-	if true {
+	if false {
 		time.Sleep(10 * time.Second)
 		at.RunFlag = false
 	} else {
