@@ -7,17 +7,34 @@ package proto;
 // 
 service Chupacabra {
   rpc EnqueueSubmit(EnqueueRequest) returns (EnqueueResponse) {}
+  rpc PollTest(PollRequest) returns (PollResponse) {}
 }
 
-messag
-
+//
 message EnqueueRequest {
-  int32 execute_turn = 1;
-  string message = 2;
-  string owner = 3;
+  string client_id = 1; // requestor
+  string message = 2;   // command
 }
 
+//
 message EnqueueResponse {
-  int32 request_status = 1;
-  string token = 2;
+  string client_id = 1;  // requestor
+  string receipt_id = 2; // response receipt
+}
+
+//
+message PollRequest {
+  string client_id = 1; // requestor
+}
+
+//
+message PollResponse {
+  string client_id = 1; // requestor
+
+  message ResponseTraffic {
+    string receipt_id = 1;
+    string response = 2;
+  }
+
+  repeated ResponseTraffic responses = 2;
 }

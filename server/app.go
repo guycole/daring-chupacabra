@@ -16,20 +16,15 @@ import (
 )
 
 type AppType struct {
-	FeatureFlags  uint32             // control run time features
-	Configuration *ConfigurationType // configuration parameters
-	GrpcPort      int                // gRPC port
-	SugarLog      *zap.SugaredLogger // logging
+	FeatureFlags uint32             // control run time features
+	GrpcPort     int                // gRPC port
+	SugarLog     *zap.SugaredLogger // logging
 
-	Quantum     time.Duration
-	RunFlag     bool // true while scheduler runs
-	TurnCounter int  // current turn
+	Quantum time.Duration
+	RunFlag bool // true while scheduler runs
 
-	CellArray    *CellArrayType  // 2D game board
-	EventArray   *EventArrayType // scheduled events
-	CatalogMap   *CatalogMapType // catalog of all items
-	Obj1StateMap *Obj1MapType    // state of all obj1 items
-	Obj2StateMap *Obj2MapType    // state of all obj2 items
+	CatalogMap *CatalogMapType // catalog of all items
+	Eclectic   *EclecticType
 }
 
 func (at *AppType) timeKeeper() {
@@ -40,8 +35,8 @@ func (at *AppType) timeKeeper() {
 	for at.RunFlag {
 		startTime := time.Now()
 
-		at.TurnCounter++
-		at.eclecticManager()
+		at.Eclectic.TurnCounter++
+		at.Eclectic.eclecticManager()
 
 		stopTime := time.Now()
 		deltaTime := stopTime.Sub(startTime)
@@ -65,27 +60,20 @@ func (at *AppType) initialize(configurationFilename string) {
 		at.SugarLog.Debug("debug level log entry")
 	}
 
-	at.Configuration = &ConfigurationType{ConfigurationFilename: configurationFilename}
-	at.Configuration.initialize(at.SugarLog)
-
 	// in the beginning...
 	at.CatalogMap = initializeCatalogMap()
-	at.CellArray = initializeCellArray()
-	at.EventArray = initializeEventArray()
-	at.Obj1StateMap = initializeObj1Map()
-	at.Obj2StateMap = initializeObj2Map()
+	at.Eclectic = initializeEclectic(at.SugarLog)
+	//at.Obj1StateMap = initializeObj1Map()
+	//at.Obj2StateMap = initializeObj2Map()
 
 	at.RunFlag = true
-	at.TurnCounter = 0
 
-	at.genesis(movingToken)
+	//at.genesis(movingToken)
 }
 
 // Run pacifier
 func (at *AppType) run() {
 	at.SugarLog.Info("run run run")
-
-	go at.timeKeeper()
 
 	//at.SugarLog.Fatal(http.ListenAndServe(":"+address, at.Router))
 
@@ -93,13 +81,18 @@ func (at *AppType) run() {
 		time.Sleep(10 * time.Second)
 		at.RunFlag = false
 	} else {
+		go at.timeKeeper()
+
 		listener, err := net.Listen("tcp", fmt.Sprintf(":%d", at.GrpcPort))
 		if err != nil {
 			at.SugarLog.Fatalf("failed to listen: %v", err)
 		}
 
+		st := ServerType{Eclectic: at.Eclectic, SugarLog: at.SugarLog}
+
 		grpcServer := grpc.NewServer()
-		pb.RegisterChupacabraServer(grpcServer, &ServerType{})
+		//pb.RegisterChupacabraServer(grpcServer, &ServerType{})
+		pb.RegisterChupacabraServer(grpcServer, &st)
 		at.SugarLog.Infof("server listening at %v", listener.Addr())
 
 		if err := grpcServer.Serve(listener); err != nil {

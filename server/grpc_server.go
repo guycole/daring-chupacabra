@@ -5,7 +5,9 @@ package main
 
 import (
 	"context"
-	"log"
+
+	"github.com/google/uuid"
+	"go.uber.org/zap"
 
 	pb "github.com/guycole/daring-chupacabra/proto"
 )
@@ -15,20 +17,29 @@ type CommandType struct {
 }
 
 type ServerType struct {
+	Eclectic *EclecticType
+	SugarLog *zap.SugaredLogger
+
 	pb.UnimplementedChupacabraServer
 }
 
-func (ss *ServerType) EnqueueSubmit(ctx context.Context, in *pb.EnqueueRequest) (*pb.EnqueueResponse, error) {
-	log.Printf("Received: %v", in)
+func (st *ServerType) EnqueueSubmit(ctx context.Context, in *pb.EnqueueRequest) (*pb.EnqueueResponse, error) {
+	st.SugarLog.Debug("enqueue submit")
 
-	//scheduleMoveaction("woot", obj2Token, 1, 1, 5)
+	clientId := in.ClientId
+	message := in.Message
+	receiptId := uuid.NewString()
 
-	/*
-		scheduleCreateAction()
-		scheduleMoveAction()
-		scheduleNominalAction()
-		scheduleDeleteAction()
-	*/
+	ent := EventNodeType{Action: parseAction, ClientID: clientId, RawCommand: message, ReceiptID: receiptId}
+	st.Eclectic.insertNodeNextTurn(&ent)
 
-	return &pb.EnqueueResponse{RequestStatus: 11, Token: "woot"}, nil
+	return &pb.EnqueueResponse{ClientId: clientId, ReceiptId: receiptId}, nil
+}
+
+func (st *ServerType) PollTest(ctx context.Context, in *pb.PollRequest) (*pb.PollResponse, error) {
+	st.SugarLog.Debug("poll test")
+
+	clientId := in.ClientId
+
+	return &pb.PollResponse{ClientId: clientId, Responses: []*pb.PollResponse_ResponseTraffic{}}, nil
 }

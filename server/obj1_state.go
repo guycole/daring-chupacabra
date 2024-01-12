@@ -3,9 +3,7 @@
 
 package main
 
-import (
-	"errors"
-)
+import "errors"
 
 type Obj1ItemType struct {
 	ItemID   string
@@ -41,30 +39,32 @@ func (at *AppType) serviceObj1(ent *EventNodeType) {
 	switch ent.Action {
 	case nothingAction:
 		at.SugarLog.Debug("obj1Token/nothingAction")
-	case createAction:
-		var location *LocationType
-		for flag := true; flag; flag = !at.CellArray.isVacant(location) {
-			location = randomLocation(maxCellArraySideY, maxCellArraySideX)
-		}
+		/*
+			case createAction:
+				var location *LocationType
+				for flag := true; flag; flag = !at.CellArray.isVacant(location) {
+					location = randomLocation(maxCellArraySideY, maxCellArraySideX)
+				}
 
-		at.CellArray.updateCell(ent.ItemID, location, obj1Token)
-		at.CatalogMap.insertItem(ent.ItemID, location, obj1Token)
-		at.Obj1StateMap.insertItem(ent.ItemID, location)
+				at.CellArray.updateCell(ent.ItemID, location, obj1Token)
+				at.CatalogMap.insertItem(ent.ItemID, location, obj1Token)
+				at.Obj1StateMap.insertItem(ent.ItemID, location)
 
-		at.scheduleNominalAction(ent.ItemID, obj1Token, at.TurnCounter+1)
-	case deleteAction:
-		at.SugarLog.Debug("obj1Token/deleteAction")
+				//at.scheduleNominalAction(ent.ItemID, obj1Token, at.TurnCounter+1)
+			case deleteAction:
+				at.SugarLog.Debug("obj1Token/deleteAction")
 
-		target, err := at.Obj1StateMap.selectItem(ent.ItemID)
-		if err == nil {
-			at.CellArray.clearCell(target.Location)
-			at.Obj1StateMap.deleteItem(ent.ItemID)
-			at.CatalogMap.updateItemLifeCycle(ent.ItemID, deleted)
-		}
-	case moveAction:
-		at.SugarLog.Debug("obj1Token/moveAction")
-	case nominalAction:
-		at.scheduleNominalAction(ent.ItemID, obj1Token, at.TurnCounter+1)
+				target, err := at.Obj1StateMap.selectItem(ent.ItemID)
+				if err == nil {
+					at.CellArray.clearCell(target.Location)
+					at.Obj1StateMap.deleteItem(ent.ItemID)
+					at.CatalogMap.updateItemLifeCycle(ent.ItemID, deleted)
+				}
+			case moveAction:
+				at.SugarLog.Debug("obj1Token/moveAction")
+			case nominalAction:
+				//at.scheduleNominalAction(ent.ItemID, obj1Token, at.TurnCounter+1)
+		*/
 	default:
 		at.SugarLog.Fatal("uknown action")
 	}

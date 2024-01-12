@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	Chupacabra_EnqueueSubmit_FullMethodName = "/proto.Chupacabra/EnqueueSubmit"
+	Chupacabra_PollTest_FullMethodName      = "/proto.Chupacabra/PollTest"
 )
 
 // ChupacabraClient is the client API for Chupacabra service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ChupacabraClient interface {
 	EnqueueSubmit(ctx context.Context, in *EnqueueRequest, opts ...grpc.CallOption) (*EnqueueResponse, error)
+	PollTest(ctx context.Context, in *PollRequest, opts ...grpc.CallOption) (*PollResponse, error)
 }
 
 type chupacabraClient struct {
@@ -46,11 +48,21 @@ func (c *chupacabraClient) EnqueueSubmit(ctx context.Context, in *EnqueueRequest
 	return out, nil
 }
 
+func (c *chupacabraClient) PollTest(ctx context.Context, in *PollRequest, opts ...grpc.CallOption) (*PollResponse, error) {
+	out := new(PollResponse)
+	err := c.cc.Invoke(ctx, Chupacabra_PollTest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChupacabraServer is the server API for Chupacabra service.
 // All implementations must embed UnimplementedChupacabraServer
 // for forward compatibility
 type ChupacabraServer interface {
 	EnqueueSubmit(context.Context, *EnqueueRequest) (*EnqueueResponse, error)
+	PollTest(context.Context, *PollRequest) (*PollResponse, error)
 	mustEmbedUnimplementedChupacabraServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedChupacabraServer struct {
 
 func (UnimplementedChupacabraServer) EnqueueSubmit(context.Context, *EnqueueRequest) (*EnqueueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EnqueueSubmit not implemented")
+}
+func (UnimplementedChupacabraServer) PollTest(context.Context, *PollRequest) (*PollResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PollTest not implemented")
 }
 func (UnimplementedChupacabraServer) mustEmbedUnimplementedChupacabraServer() {}
 
@@ -92,6 +107,24 @@ func _Chupacabra_EnqueueSubmit_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Chupacabra_PollTest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PollRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChupacabraServer).PollTest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Chupacabra_PollTest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChupacabraServer).PollTest(ctx, req.(*PollRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Chupacabra_ServiceDesc is the grpc.ServiceDesc for Chupacabra service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var Chupacabra_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EnqueueSubmit",
 			Handler:    _Chupacabra_EnqueueSubmit_Handler,
+		},
+		{
+			MethodName: "PollTest",
+			Handler:    _Chupacabra_PollTest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
