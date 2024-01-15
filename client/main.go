@@ -7,6 +7,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/google/uuid"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
@@ -19,9 +21,8 @@ var (
 
 const banner = "chupacapra-client 0.0"
 
-func writeCommand(cmd string) {
+func writeCommand(id, cmd string) {
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -33,13 +34,33 @@ func writeCommand(cmd string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	rr, err := cc.EnqueueSubmit(ctx, &pb.EnqueueRequest{ExecuteTurn: -1, Message: "woot", Owner: "guy"})
-
+	rr, err := cc.EnqueueSubmit(ctx, &pb.EnqueueRequest{Message: cmd, ClientId: id})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Fatalf("could not write: %v", err)
 	}
 
-	log.Printf("Result: %s", rr.GetToken())
+	log.Printf("Result: %s", rr.GetReceiptId())
+}
+
+func receiveTraffic(id string) {
+	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+
+	defer conn.Close()
+
+	cc := pb.NewChupacabraClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	rr, err := cc.PollTest(ctx, &pb.PollRequest{ClientId: id})
+	if err != nil {
+		log.Fatalf("could not read: %v", err)
+	}
+
+	log.Printf("Result: %s", rr.GetClientId())
 }
 
 func main() {
@@ -47,38 +68,21 @@ func main() {
 
 	log.Println(banner)
 
+	clientId := uuid.NewString()
+	log.Printf("client id:%s", clientId)
+
 	runFlag := true
 	for runFlag {
 		fmt.Print("prompt>")
 
 		var input string
 		fmt.Scanln(&input)
+		if input == "quit" {
+			runFlag = false
+			continue
+		}
 
-		fmt.Println(input)
-
-		writeCommand(input)
+		writeCommand(clientId, input)
+		receiveTraffic(clientId)
 	}
-
-	/*
-	   conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	   	if err != nil {
-	   		log.Fatalf("did not connect: %v", err)
-	   	}
-
-	   defer conn.Close()
-
-	   cc := pb.NewChupacabraClient(conn)
-
-	   ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	   defer cancel()
-
-	   rr, err := cc.EnqueueSubmit(ctx, &pb.EnqueueRequest{ExecuteTurn: 111, Message: "woot", Owner: "guy"})
-
-	   	if err != nil {
-	   		log.Fatalf("could not greet: %v", err)
-	   	}
-
-	   log.Printf("Result: %s", rr.GetToken())
-	*/
 }

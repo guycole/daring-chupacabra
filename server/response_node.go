@@ -3,50 +3,18 @@
 
 package main
 
-import (
-	"errors"
-)
-
-type MoveArgType struct {
-	XX int // column
-	YY int // row
+type ResponseNodeType struct {
+	ClientID  string
+	Message   string
+	ReceiptID string
+	Next      *ResponseNodeType
 }
 
-type EventActionEnum int
-
-const (
-	nothingAction EventActionEnum = iota
-	createAction
-	deleteAction
-	moveAction
-	nominalAction
-	parseAction
-)
-
-func (eae EventActionEnum) String() string {
-	return [...]string{"nothing", "create", "delete", "move", "nominal", "parse"}[eae]
+func newResponseNode(clientId, message, receiptId string) *ResponseNodeType {
+	return &ResponseNodeType{ClientID: clientId, Message: message, ReceiptID: receiptId}
 }
 
-type EventNodeType struct {
-	Action     EventActionEnum
-	ClientID   string
-	ItemID     string
-	MoveArgs   *MoveArgType
-	RawCommand string
-	ReceiptID  string
-	TokenType  CatalogTokenEnum
-	Next       *EventNodeType
-}
-
-type EventNodeHeaderType struct {
-	Population int
-	Next       *EventNodeType
-}
-
-func newEventNode(action EventActionEnum, id string, token CatalogTokenEnum) *EventNodeType {
-	return &EventNodeType{Action: action, ItemID: id, TokenType: token}
-}
-
+/*
 func (eventNodeHeader *EventNodeHeaderType) insertNode(candidate *EventNodeType) {
 	candidate.Next = nil
 
@@ -79,3 +47,4 @@ func (eventNodeHeader *EventNodeHeaderType) selectNextNode() (*EventNodeType, er
 
 	return result, nil
 }
+*/

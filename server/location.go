@@ -66,10 +66,8 @@ func (origin *LocationType) legalLocation(limitY, limitX int) bool {
 }
 
 /*
-   map origin lower left 1, 1
-
-   0 1 2  (gate indices and relative locations)
-   3 4 5
+   1 2 3 (indices and relative locations)
+   4 0 5 (0 is origin)
    6 7 8
 */
 
@@ -80,20 +78,20 @@ func (origin *LocationType) adjacencyTest(target *LocationType) int {
 	for ndx := 0; ndx < 9; ndx++ {
 		switch ndx {
 		case 0:
-			x = origin.XX - 1
-			y = origin.YY + 1
-		case 1:
 			x = origin.XX
+			y = origin.YY
+		case 1:
+			x = origin.XX - 1
 			y = origin.YY + 1
 		case 2:
-			x = origin.XX + 1
+			x = origin.XX
 			y = origin.YY + 1
 		case 3:
+			x = origin.XX + 1
+			y = origin.YY + 1
+		case 4:
 			x = origin.XX - 1
 			y = origin.YY
-		case 4:
-			// should never match
-			continue
 		case 5:
 			x = origin.XX + 1
 			y = origin.YY
