@@ -3,7 +3,9 @@
 
 package main
 
-import "go.uber.org/zap"
+import (
+	"go.uber.org/zap"
+)
 
 type EclecticType struct {
 	EventArray  *EventArrayType    // scheduled events
@@ -22,6 +24,11 @@ func initializeEclectic(sugarLog *zap.SugaredLogger) *EclecticType {
 func (et *EclecticType) insertNodeNextTurn(candidate *EventNodeType) {
 	et.SugarLog.Debug("insert node next turn")
 	et.EventArray.insertNode(candidate, et.TurnCounter+1)
+}
+
+func (et *EclecticType) getResponse(clientId string) []*ResponseNodeType {
+	et.SugarLog.Debug("get responses")
+	return et.ResponseMap.getResponse(clientId)
 }
 
 /*

@@ -5,11 +5,14 @@ package main
 
 import (
 	"log"
+	"sync"
 )
 
 const maxEventNodeHeader = 100
 
 type EventArrayType [maxEventNodeHeader]*EventNodeHeaderType
+
+var eventArrayLock = sync.RWMutex{}
 
 func initializeEventArray() *EventArrayType {
 	eventArray := new(EventArrayType)
@@ -32,10 +35,16 @@ func (eventArray *EventArrayType) dumper() {
 }
 
 func (eventArray *EventArrayType) insertNode(candidate *EventNodeType, turn int) {
+	eventArrayLock.Lock()
+	defer eventArrayLock.Unlock()
+
 	eventArray[turn%maxEventNodeHeader].insertNode(candidate)
 }
 
 func (eventArray *EventArrayType) selectNextNode(turn int) (*EventNodeType, error) {
+	eventArrayLock.RLock()
+	defer eventArrayLock.RUnlock()
+
 	result, err := eventArray[turn%maxEventNodeHeader].selectNextNode()
 	return result, err
 }

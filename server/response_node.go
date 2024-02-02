@@ -4,14 +4,13 @@
 package main
 
 type ResponseNodeType struct {
-	ClientID  string
 	Message   string
 	ReceiptID string
 	Next      *ResponseNodeType
 }
 
-func newResponseNode(clientId, message, receiptId string) *ResponseNodeType {
-	return &ResponseNodeType{ClientID: clientId, Message: message, ReceiptID: receiptId}
+func newResponseNode(message, receiptId string) *ResponseNodeType {
+	return &ResponseNodeType{Message: message, ReceiptID: receiptId}
 }
 
 /*

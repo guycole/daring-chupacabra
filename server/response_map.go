@@ -10,18 +10,22 @@ func initializeResponseMap() *ResponseMapType {
 	return &responseMap
 }
 
-func (responseMap *ResponseMapType) insertNode(candidate *ResponseNodeType) {
+func (responseMap *ResponseMapType) insertNode(candidate *ResponseNodeType, clientId string) {
 	candidate.Next = nil
 
-	temp, ok := responseMap[candidate.ClientID]
+	temp, ok := (*responseMap)[clientId] // Dereference the pointer to access the underlying map
 	if ok {
 		// traffic already waiting for this client
 		candidate.Next = temp
-		responseMap[candidate.ClientID] = candidate
+		(*responseMap)[clientId] = candidate // Dereference the pointer to access the underlying map
 	} else {
 		// no traffic waiting for this client
-		responseMap[candidate.ClientID] = candidate
+		(*responseMap)[clientId] = candidate // Dereference the pointer to access the underlying map
 	}
 
-	(*responseMap)[candidate.ClientID] = candidate
+	//(*responseMap)[candidate.ClientID] = candidate
+}
+
+func (responseMap *ResponseMapType) getResponse(clientId string) []*ResponseNodeType {
+	return nil
 }

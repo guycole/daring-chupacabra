@@ -41,5 +41,7 @@ func (st *ServerType) PollTest(ctx context.Context, in *pb.PollRequest) (*pb.Pol
 
 	clientId := in.ClientId
 
+	st.Eclectic.getResponse(clientId)
+
 	return &pb.PollResponse{ClientId: clientId, Responses: []*pb.PollResponse_ResponseTraffic{}}, nil
 }
